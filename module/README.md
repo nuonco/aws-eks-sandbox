@@ -1,6 +1,4 @@
-# m1 aws-eks-sandbox
-
-Turnkey AWS EKS sandbox for Nuon apps.
+# Module
 
 ## Requirements
 
@@ -14,46 +12,17 @@ Turnkey AWS EKS sandbox for Nuon apps.
 
 ## Providers
 
-| Name                                                         | Version |
-| ------------------------------------------------------------ | ------- |
-| <a name="provider_aws"></a> [aws](#provider_aws)             | 5.94.1  |
-| <a name="provider_helm"></a> [helm](#provider_helm)          | 2.17.0  |
-| <a name="provider_kubectl"></a> [kubectl](#provider_kubectl) | 1.19.0  |
+No providers.
 
 ## Modules
 
-| Name                                                                                         | Source                                                                   | Version    |
-| -------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ | ---------- |
-| <a name="module_alb_controller_irsa"></a> [alb_controller_irsa](#module_alb_controller_irsa) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks | ~> 5.0     |
-| <a name="module_ebs_csi_irsa"></a> [ebs_csi_irsa](#module_ebs_csi_irsa)                      | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks | ~> 5.0     |
-| <a name="module_ecr"></a> [ecr](#module_ecr)                                                 | terraform-aws-modules/ecr/aws                                            | >= 2.4.0   |
-| <a name="module_eks"></a> [eks](#module_eks)                                                 | terraform-aws-modules/eks/aws                                            | ~> 20.35.0 |
-| <a name="module_nuon_dns"></a> [nuon_dns](#module_nuon_dns)                                  | ./nuon_dns                                                               | n/a        |
+| Name                                                                                            | Source | Version |
+| ----------------------------------------------------------------------------------------------- | ------ | ------- |
+| <a name="module_nuon-aws-eks-sandbox"></a> [nuon-aws-eks-sandbox](#module_nuon-aws-eks-sandbox) | ./..   | n/a     |
 
 ## Resources
 
-| Name                                                                                                                                                            | Type        |
-| --------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
-| [aws_iam_policy.ecr_access](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy)                                             | resource    |
-| [aws_iam_role_policy_attachment.ecr_access_deprovision](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource    |
-| [aws_iam_role_policy_attachment.ecr_access_maintenance](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource    |
-| [aws_iam_role_policy_attachment.ecr_access_provision](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment)   | resource    |
-| [aws_kms_key.eks](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/kms_key)                                                          | resource    |
-| [helm_release.alb_ingress_controller](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release)                                     | resource    |
-| [helm_release.ebs_csi](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release)                                                    | resource    |
-| [helm_release.ingress_nginx](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release)                                              | resource    |
-| [helm_release.kyverno](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release)                                                    | resource    |
-| [helm_release.metrics_server](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release)                                             | resource    |
-| [kubectl_manifest.kyverno_policies](https://registry.terraform.io/providers/gavinbunney/kubectl/latest/docs/resources/manifest)                                 | resource    |
-| [aws_availability_zones.available](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/availability_zones)                           | data source |
-| [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity)                                   | data source |
-| [aws_iam_policy_document.ecr](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document)                               | data source |
-| [aws_security_group.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/security_group)                                     | data source |
-| [aws_subnet.private](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/subnet)                                                     | data source |
-| [aws_subnet.public](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/subnet)                                                      | data source |
-| [aws_subnets.private](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/subnets)                                                   | data source |
-| [aws_subnets.public](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/subnets)                                                    | data source |
-| [aws_vpc.vpc](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/vpc)                                                               | data source |
+No resources.
 
 ## Inputs
 
@@ -66,7 +35,6 @@ Turnkey AWS EKS sandbox for Nuon apps.
 | <a name="input_default_instance_type"></a> [default_instance_type](#input_default_instance_type)                                                                                                 | The EC2 instance type to use for the EKS cluster's default node group.                                                         | `string`         | `"t3a.medium"`                                                                                                                                                                                                                                                                                                                                                     |    no    |
 | <a name="input_deprovision_iam_role_arn"></a> [deprovision_iam_role_arn](#input_deprovision_iam_role_arn)                                                                                        | The deprovision IAM Role ARN                                                                                                   | `string`         | n/a                                                                                                                                                                                                                                                                                                                                                                |   yes    |
 | <a name="input_deprovision_role_eks_access_entry_policy_associations"></a> [deprovision_role_eks_access_entry_policy_associations](#input_deprovision_role_eks_access_entry_policy_associations) | EKS Cluster Access Entry Policy Associations for deprovision role.                                                             | `map(any)`       | <pre>{<br/> "cluster_admin": {<br/> "access_scope": {<br/> "type": "cluster"<br/> },<br/> "policy_arn": "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"<br/> },<br/> "eks_admin": {<br/> "access_scope": {<br/> "type": "cluster"<br/> },<br/> "policy_arn": "arn:aws:eks::aws:cluster-access-policy/AmazonEKSAdminPolicy"<br/> }<br/>}</pre> |    no    |
-| <a name="input_deprovision_role_eks_kubernetes_groups"></a> [deprovision_role_eks_kubernetes_groups](#input_deprovision_role_eks_kubernetes_groups)                                              | List of Kubernetes Groups to add this role to.                                                                                 | `list(any)`      | `[]`                                                                                                                                                                                                                                                                                                                                                               |    no    |
 | <a name="input_desired_size"></a> [desired_size](#input_desired_size)                                                                                                                            | The desired number of nodes in the managed node group.                                                                         | `number`         | `3`                                                                                                                                                                                                                                                                                                                                                                |    no    |
 | <a name="input_enable_alb_ingress_controller"></a> [enable_alb_ingress_controller](#input_enable_alb_ingress_controller)                                                                         | Whether or not the ALB Ingress helm chart should be installed.                                                                 | `string`         | `"false"`                                                                                                                                                                                                                                                                                                                                                          |    no    |
 | <a name="input_enable_ingress_nginx"></a> [enable_ingress_nginx](#input_enable_ingress_nginx)                                                                                                    | Whether or not the Ingress-Nginx helm chart should be installed.                                                               | `string`         | `"false"`                                                                                                                                                                                                                                                                                                                                                          |    no    |
@@ -75,13 +43,11 @@ Turnkey AWS EKS sandbox for Nuon apps.
 | <a name="input_kyverno_policies"></a> [kyverno_policies](#input_kyverno_policies)                                                                                                                | A list of kyverno policies.                                                                                                    | `list(map(any))` | `[]`                                                                                                                                                                                                                                                                                                                                                               |    no    |
 | <a name="input_maintenance_iam_role_arn"></a> [maintenance_iam_role_arn](#input_maintenance_iam_role_arn)                                                                                        | The provision IAM Role ARN                                                                                                     | `string`         | n/a                                                                                                                                                                                                                                                                                                                                                                |   yes    |
 | <a name="input_maintenance_role_eks_access_entry_policy_associations"></a> [maintenance_role_eks_access_entry_policy_associations](#input_maintenance_role_eks_access_entry_policy_associations) | EKS Cluster Access Entry Policy Associations for maintenance role.                                                             | `map(any)`       | <pre>{<br/> "cluster_admin": {<br/> "access_scope": {<br/> "type": "cluster"<br/> },<br/> "policy_arn": "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"<br/> },<br/> "eks_admin": {<br/> "access_scope": {<br/> "type": "cluster"<br/> },<br/> "policy_arn": "arn:aws:eks::aws:cluster-access-policy/AmazonEKSAdminPolicy"<br/> }<br/>}</pre> |    no    |
-| <a name="input_maintenance_role_eks_kubernetes_groups"></a> [maintenance_role_eks_kubernetes_groups](#input_maintenance_role_eks_kubernetes_groups)                                              | List of Kubernetes Groups to add this role to.                                                                                 | `list(any)`      | `[]`                                                                                                                                                                                                                                                                                                                                                               |    no    |
 | <a name="input_max_size"></a> [max_size](#input_max_size)                                                                                                                                        | The maximum number of nodes in the managed node group.                                                                         | `number`         | `5`                                                                                                                                                                                                                                                                                                                                                                |    no    |
 | <a name="input_min_size"></a> [min_size](#input_min_size)                                                                                                                                        | The minimum number of nodes in the managed node group.                                                                         | `number`         | `2`                                                                                                                                                                                                                                                                                                                                                                |    no    |
 | <a name="input_nuon_id"></a> [nuon_id](#input_nuon_id)                                                                                                                                           | The nuon id for this install. Used for naming purposes.                                                                        | `string`         | n/a                                                                                                                                                                                                                                                                                                                                                                |   yes    |
 | <a name="input_provision_iam_role_arn"></a> [provision_iam_role_arn](#input_provision_iam_role_arn)                                                                                              | The maintenance IAM Role ARN                                                                                                   | `string`         | n/a                                                                                                                                                                                                                                                                                                                                                                |   yes    |
 | <a name="input_provision_role_eks_access_entry_policy_associations"></a> [provision_role_eks_access_entry_policy_associations](#input_provision_role_eks_access_entry_policy_associations)       | EKS Cluster Access Entry Policy Associations for provision role.                                                               | `map(any)`       | <pre>{<br/> "cluster_admin": {<br/> "access_scope": {<br/> "type": "cluster"<br/> },<br/> "policy_arn": "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"<br/> },<br/> "eks_admin": {<br/> "access_scope": {<br/> "type": "cluster"<br/> },<br/> "policy_arn": "arn:aws:eks::aws:cluster-access-policy/AmazonEKSAdminPolicy"<br/> }<br/>}</pre> |    no    |
-| <a name="input_provision_role_eks_kubernetes_groups"></a> [provision_role_eks_kubernetes_groups](#input_provision_role_eks_kubernetes_groups)                                                    | List of Kubernetes Groups to add this role to.                                                                                 | `list(any)`      | `[]`                                                                                                                                                                                                                                                                                                                                                               |    no    |
 | <a name="input_public_root_domain"></a> [public_root_domain](#input_public_root_domain)                                                                                                          | The public root domain.                                                                                                        | `string`         | n/a                                                                                                                                                                                                                                                                                                                                                                |   yes    |
 | <a name="input_region"></a> [region](#input_region)                                                                                                                                              | The region to launch the cluster in.                                                                                           | `string`         | n/a                                                                                                                                                                                                                                                                                                                                                                |   yes    |
 | <a name="input_tags"></a> [tags](#input_tags)                                                                                                                                                    | List of custom tags to add to the install resources. Used for taxonomic purposes.                                              | `map(any)`       | n/a                                                                                                                                                                                                                                                                                                                                                                |   yes    |
@@ -89,63 +55,12 @@ Turnkey AWS EKS sandbox for Nuon apps.
 
 ## Outputs
 
-| Name                                                                                                  | Description                                                                                                                                                                                        |
-| ----------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| <a name="output_account"></a> [account](#output_account)                                              | A map of AWS account attributes: id, region.                                                                                                                                                       |
-| <a name="output_alb_ingress_controller"></a> [alb_ingress_controller](#output_alb_ingress_controller) | n/a                                                                                                                                                                                                |
-| <a name="output_cluster"></a> [cluster](#output_cluster)                                              | A map of EKS cluster attributes: arn, certificate_authority_data, endpoint, name, platform_version, status, oidc_issuer_url, oidc_provider_arn, cluster_security_group_id, node_security_group_id. |
-| <a name="output_ecr"></a> [ecr](#output_ecr)                                                          | A map of ECR attributes: repository_url, repository_arn, repository_name, registry_id, registry_url.                                                                                               |
-| <a name="output_ingress_nginx"></a> [ingress_nginx](#output_ingress_nginx)                            | n/a                                                                                                                                                                                                |
-| <a name="output_nuon_dns"></a> [nuon_dns](#output_nuon_dns)                                           | toggleables                                                                                                                                                                                        |
-| <a name="output_vpc"></a> [vpc](#output_vpc)                                                          | A map of vpc attributes: name, id, cidr, azs, private_subnet_cidr_blocks, private_subnet_ids, public_subnet_cidr_blocks, public_subnet_ids, default_security_group_id.                             |
-
-## Default Helm Charts
-
-1. EBS CSI
-2. Metrics Server
-3. Kyverno
-
-### Optional Helm Charts
-
-1. ALB Ingress Controller
-2. Ingress-Nginx (requires the alb ingress controller)
-
-## [Optional] Nuon DNS
-
-To use a `nuon.run` DNS name, you'll need to set `enable_nuon_dns` and
-`enable_alb_ingress_controller` to `true`.
-
-Note: The domain names are provided by Nuon automatically and cannot be
-customized.
-
-| Input                           | Example                                       |
-| ------------------------------- | --------------------------------------------- |
-| `enable_nuon_dns`               | `1`, or `true`                                |
-| `enable_alb_ingress_controller` | `1`, or `true`                                |
-| `public_domain_name`            | `inlxxxxxxxxxxxxxxxxxxxxxxx.nuon.run`         |
-| `private_domain_name`           | `private.inlxxxxxxxxxxxxxxxxxxxxxxx.nuon.run` |
-
-### Resources
-
-When Nuon DNS is enabled, the following Helm Charts are installed.
-
-1. cert-manager
-2. cert-manager-issuer
-3. external-dns
-
-And the following AWS Resources will be created.
-
-1. Route 53 Zone
-
-## Notes
-
-### Runner Role
-
-This is external now. We now just create an access entry for it.
-
-### ECR
-
-Grant the runner access via a policy (1 of 4, the other 3 being maintenance,
-provision, deprovision)
-
-kyverno should only administer the maintenance
+| Name                                                                                                  | Description |
+| ----------------------------------------------------------------------------------------------------- | ----------- |
+| <a name="output_account"></a> [account](#output_account)                                              | n/a         |
+| <a name="output_alb_ingress_controller"></a> [alb_ingress_controller](#output_alb_ingress_controller) | n/a         |
+| <a name="output_cluster"></a> [cluster](#output_cluster)                                              | n/a         |
+| <a name="output_ecr"></a> [ecr](#output_ecr)                                                          | n/a         |
+| <a name="output_ingress_nginx"></a> [ingress_nginx](#output_ingress_nginx)                            | n/a         |
+| <a name="output_nuon_dns"></a> [nuon_dns](#output_nuon_dns)                                           | n/a         |
+| <a name="output_vpc"></a> [vpc](#output_vpc)                                                          | n/a         |
