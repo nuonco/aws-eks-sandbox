@@ -13,6 +13,7 @@ module "nuon_dns" {
 
   depends_on = [
     module.eks,
-    helm_release.metrics_server
+    helm_release.metrics_server,
+    helm_release.alb_ingress_controller
   ]
 }
