@@ -1,6 +1,7 @@
 locals {
-  aws_alb_controller = {
-    service_account_name = "aws-load-balancer-controller"
+  alb_ingress_controller = {
+    namespace            = "alb-ingress-controller"
+    service_account_name = "alb-ingress-controller"
   }
 }
 
@@ -18,7 +19,7 @@ module "alb_controller_irsa" {
   oidc_providers = {
     k8s = {
       provider_arn               = module.eks.oidc_provider_arn
-      namespace_service_accounts = ["alb-ingress:${local.aws_alb_controller.service_account_name}"]
+      namespace_service_accounts = ["${local.alb_ingress_controller.namespace}:${local.alb_ingress_controller.service_account_name}"]
     }
   }
 
@@ -28,7 +29,7 @@ module "alb_controller_irsa" {
 resource "helm_release" "alb_ingress_controller" {
   count = local.enable_alb_ingress_controller ? 1 : 0
 
-  namespace        = "alb-ingress"
+  namespace        = local.alb_ingress_controller.namespace
   create_namespace = true
 
   name       = "alb-ingress-controller"
@@ -58,7 +59,7 @@ resource "helm_release" "alb_ingress_controller" {
 
   set {
     name  = "serviceAccount.name"
-    value = local.aws_alb_controller.service_account_name
+    value = local.alb_ingress_controller.service_account_name
   }
 
   set {
