@@ -15,16 +15,19 @@ locals {
       principal_arn       = var.provision_iam_role_arn
       kubernetes_groups   = var.provision_role_eks_kubernetes_groups
       policy_associations = var.provision_role_eks_access_entry_policy_associations,
+      tags                = local.tags
     },
     "deprovision" = {
       principal_arn       = var.deprovision_iam_role_arn
       kubernetes_groups   = var.deprovision_role_eks_kubernetes_groups
       policy_associations = var.deprovision_role_eks_access_entry_policy_associations,
+      tags                = local.tags
     },
     "maintenance" = {
       principal_arn       = var.maintenance_iam_role_arn
       kubernetes_groups   = var.maintenance_role_eks_kubernetes_groups
       policy_associations = var.maintenance_role_eks_access_entry_policy_associations,
+      tags                = local.tags
     }
 
   }
