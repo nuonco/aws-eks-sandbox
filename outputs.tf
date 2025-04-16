@@ -36,12 +36,14 @@ output "vpc" {
     # azs  = data.aws_vpc.vpc.azs
 
     // ensure the data resource will actually hand us this
-    private_subnet_cidr_blocks = values(data.aws_subnet.private)[*].cidr_block
-    private_subnet_ids         = data.aws_subnets.private.ids
+    private_subnet_cidr_blocks = local.subnets.private.cidrs
+    private_subnet_ids         = local.subnets.private.ids
 
-    public_subnet_cidr_blocks = values(data.aws_subnet.public)[*].cidr_block
-    public_subnet_ids         = data.aws_subnets.public.ids
-    # public_subnet_ids         = data.aws_subnet.public[each.key].id
+    public_subnet_cidr_blocks = local.subnets.public.cidrs
+    public_subnet_ids         = local.subnets.public.ids
+    runner_subnet_id          = local.subnets.runner.ids[0]
+    runner_subnet_cidr        = local.subnets.runner.cidrs[0]
+
     default_security_group_id = data.aws_security_group.default.id
   }
   description = "A map of vpc attributes: name, id, cidr, azs, private_subnet_cidr_blocks, private_subnet_ids, public_subnet_cidr_blocks, public_subnet_ids, default_security_group_id."
