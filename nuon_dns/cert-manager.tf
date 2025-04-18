@@ -28,10 +28,10 @@ module "cert_manager_irsa" {
 }
 
 resource "helm_release" "cert_manager" {
-  namespace        = "cert-manager"
+  namespace        = local.cert_manager.namespace
   create_namespace = true
 
-  name       = "cert-manager"
+  name       = local.cert_manager.name
   repository = "https://charts.jetstack.io"
   chart      = "cert-manager"
   version    = "v1.11.0"

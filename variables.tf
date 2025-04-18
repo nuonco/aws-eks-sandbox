@@ -1,10 +1,8 @@
 locals {
-  enable_alb_ingress_controller = contains(["1", "true"], var.enable_alb_ingress_controller)
-  enable_ingress_nginx          = contains(["1", "true"], var.enable_ingress_nginx) && local.enable_alb_ingress_controller
   # nuon dns
   enable_nuon_dns = contains(["1", "true"], var.enable_nuon_dns)
   nuon_dns = {
-    enabled              = local.enable_nuon_dns && local.enable_alb_ingress_controller
+    enabled              = local.enable_nuon_dns
     internal_root_domain = var.internal_root_domain
     public_root_domain   = var.public_root_domain
   }

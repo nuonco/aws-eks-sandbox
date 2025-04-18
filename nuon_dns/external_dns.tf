@@ -3,6 +3,7 @@ locals {
   public_domain   = aws_route53_zone.public.name
   external_dns = {
     namespace = "external-dns"
+    name      = "external-dns"
     extra_args = {
       0 = "--publish-internal-services",
       1 = "--zone-id-filter=${aws_route53_zone.internal.id}",
@@ -36,10 +37,10 @@ module "external_dns_irsa" {
 }
 
 resource "helm_release" "external_dns" {
-  namespace        = "external-dns"
+  namespace        = local.external_dns.namespace
   create_namespace = true
 
-  name       = "external-dns"
+  name       = local.external_dns.name
   repository = "https://kubernetes-sigs.github.io/external-dns/"
   chart      = "external-dns"
   version    = "1.12.0"

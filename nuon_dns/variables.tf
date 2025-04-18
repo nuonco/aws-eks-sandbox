@@ -1,6 +1,11 @@
+variable "eks_cluster_name" {
+  type        = string
+  description = "The name of the EKS Cluster created in eks.tf"
+}
+
 variable "eks_oidc_provider_arn" {
   type        = string
-  description = "The EKS Cluster OIDC Provider aRN"
+  description = "The EKS Cluster OIDC Provider ARN"
 }
 
 variable "internal_root_domain" {
