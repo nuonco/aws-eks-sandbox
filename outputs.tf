@@ -67,19 +67,29 @@ output "nuon_dns" {
     enabled         = local.nuon_dns.enabled,
     public_domain   = local.nuon_dns.enabled ? module.nuon_dns[0].public_domain : { zone_id : "", name : "", nameservers : tolist([""]) }
     internal_domain = local.nuon_dns.enabled ? module.nuon_dns[0].internal_domain : { zone_id : "", name : "", nameservers : tolist([""]) }
-  }
-}
-
-output "alb_ingress_controller" {
-  value = {
-    enabled = local.enable_alb_ingress_controller
-    id      = local.enable_alb_ingress_controller ? resource.helm_release.alb_ingress_controller[0].id : ""
-  }
-}
-
-output "ingress_nginx" {
-  value = {
-    enabled = local.enable_ingress_nginx
-    id      = local.enable_ingress_nginx ? resource.helm_release.ingress_nginx[0].id : ""
+    alb_ingress_controller = {
+      enabled  = local.nuon_dns.enabled
+      id       = local.nuon_dns.enabled ? module.nuon_dns[0].alb_ingress_controller.release.id : ""
+      chart    = local.nuon_dns.enabled ? module.nuon_dns[0].alb_ingress_controller.release.chart : ""
+      revision = local.nuon_dns.enabled ? module.nuon_dns[0].alb_ingress_controller.release.revision : ""
+    }
+    external_dns = {
+      enabled  = local.nuon_dns.enabled
+      id       = local.nuon_dns.enabled ? module.nuon_dns[0].external_dns.release.id : ""
+      chart    = local.nuon_dns.enabled ? module.nuon_dns[0].external_dns.release.chart : ""
+      revision = local.nuon_dns.enabled ? module.nuon_dns[0].external_dns.release.revision : ""
+    }
+    cert_manager = {
+      enabled  = local.nuon_dns.enabled
+      id       = local.nuon_dns.enabled ? module.nuon_dns[0].cert_manager.release.id : ""
+      chart    = local.nuon_dns.enabled ? module.nuon_dns[0].cert_manager.release.chart : ""
+      revision = local.nuon_dns.enabled ? module.nuon_dns[0].cert_manager.release.revision : ""
+    }
+    ingress_nginx = {
+      enabled  = local.nuon_dns.enabled
+      id       = local.nuon_dns.enabled ? module.nuon_dns[0].ingress_nginx.release.id : ""
+      chart    = local.nuon_dns.enabled ? module.nuon_dns[0].ingress_nginx.release.chart : ""
+      revision = local.nuon_dns.enabled ? module.nuon_dns[0].ingress_nginx.release.revision : ""
+    }
   }
 }

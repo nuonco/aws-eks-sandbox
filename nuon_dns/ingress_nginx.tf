@@ -1,10 +1,15 @@
-resource "helm_release" "ingress_nginx" {
-  count = local.enable_ingress_nginx ? 1 : 0
+locals {
+  ingress_nginx = {
+    namespace = "ingress-nginx"
+    name      = "ingress-nginx"
+  }
+}
 
-  namespace        = "nginx-ingress"
+resource "helm_release" "ingress_nginx" {
+  namespace        = local.ingress_nginx.namespace
   create_namespace = true
 
-  name       = "ingress-nginx"
+  name       = local.ingress_nginx.name
   repository = "https://kubernetes.github.io/ingress-nginx"
   chart      = "ingress-nginx"
   version    = "4.12.1"
@@ -16,7 +21,6 @@ resource "helm_release" "ingress_nginx" {
   }
 
   depends_on = [
-    module.alb_controller_irsa,
     helm_release.alb_ingress_controller
   ]
 }

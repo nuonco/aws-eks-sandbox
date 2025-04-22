@@ -6,8 +6,6 @@ locals {
 }
 
 module "alb_controller_irsa" {
-  count = local.enable_alb_ingress_controller ? 1 : 0
-
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
   version = "~> 5.0"
 
@@ -18,17 +16,15 @@ module "alb_controller_irsa" {
 
   oidc_providers = {
     k8s = {
-      provider_arn               = module.eks.oidc_provider_arn
+      provider_arn               = var.eks_oidc_provider_arn
       namespace_service_accounts = ["${local.alb_ingress_controller.namespace}:${local.alb_ingress_controller.service_account_name}"]
     }
   }
 
-  tags = local.tags
+  tags = var.tags
 }
 
 resource "helm_release" "alb_ingress_controller" {
-  count = local.enable_alb_ingress_controller ? 1 : 0
-
   namespace        = local.alb_ingress_controller.namespace
   create_namespace = true
 
@@ -44,7 +40,7 @@ resource "helm_release" "alb_ingress_controller" {
 
   set {
     name  = "clusterName"
-    value = module.eks.cluster_name
+    value = var.eks_cluster_name
   }
 
   set {
@@ -64,11 +60,16 @@ resource "helm_release" "alb_ingress_controller" {
 
   set {
     name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
-    value = module.alb_controller_irsa[0].iam_role_arn
+    value = module.alb_controller_irsa.iam_role_arn
   }
 
   set { // we only set this one tag in case any of the others (in local.tags) conflict.
     name  = "defaultTags.nuon_install_id"
+    value = var.nuon_id
+  }
+
+  set {
+    name  = "defaultTags.install\\.nuon\\.co\\/id"
     value = var.nuon_id
   }
 
@@ -78,7 +79,7 @@ resource "helm_release" "alb_ingress_controller" {
   }
 
   depends_on = [
+    helm_release.cert_manager,
     module.alb_controller_irsa,
-    module.eks,
   ]
 }

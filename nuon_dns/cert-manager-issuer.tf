@@ -12,7 +12,7 @@ resource "kubectl_manifest" "internal_cluster_issuer" {
     apiVersion = "cert-manager.io/v1"
     kind       = "ClusterIssuer"
     metadata = {
-      namespace = "cert-manager"
+      namespace = local.cert_manager.namespace
       name      = local.cert_manager_issuers.internal_issuer_name
     }
     spec = {
@@ -51,7 +51,7 @@ resource "kubectl_manifest" "public_cluster_issuer" {
     apiVersion = "cert-manager.io/v1"
     kind       = "ClusterIssuer"
     metadata = {
-      namespace = "cert-manager"
+      namespace = local.cert_manager.namespace
       name      = local.cert_manager_issuers.public_issuer_name
     }
     spec = {
@@ -79,4 +79,7 @@ resource "kubectl_manifest" "public_cluster_issuer" {
       }
     }
   })
+  depends_on = [
+    helm_release.cert_manager
+  ]
 }
