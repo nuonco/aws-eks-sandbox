@@ -289,9 +289,11 @@ rules:
   resources:
   - namespaces
   verbs:
-  - get
-  - list
-  - watch
+  - "*" # over written with * so helm can do its thing
+  # default
+  # - get
+  # - list
+  # - watch
 - apiGroups:
   - discovery.k8s.io
   resources:
