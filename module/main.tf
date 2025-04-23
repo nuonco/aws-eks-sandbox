@@ -12,7 +12,7 @@ module "nuon-aws-eks-sandbox" {
 
   additional_access_entry = var.additional_access_entry
 
-  kyverno_policies = var.kyverno_policies
+  kyverno_policy_dir = var.kyverno_policy_dir
 
   # cluster
   cluster_version       = var.cluster_version

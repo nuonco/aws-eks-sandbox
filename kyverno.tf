@@ -36,3 +36,13 @@ resource "kubectl_manifest" "default_policies" {
     helm_release.kyverno
   ]
 }
+
+resource "kubectl_manifest" "vendor_policies" {
+  for_each = fileset("${var.kyverno_policy_dir}", "*.yaml")
+
+  yaml_body = file("${var.kyverno_policy_dir}/${each.key}")
+
+  depends_on = [
+    helm_release.kyverno
+  ]
+}
