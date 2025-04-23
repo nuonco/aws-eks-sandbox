@@ -25,7 +25,7 @@ data "aws_subnets" "private" {
 
   tags = {
     visibility               = "private"
-    "network.nuon.co/domain" = "private"
+    "network.nuon.co/domain" = "internal"
     "install.nuon.co/id"     = var.nuon_id
   }
 }
