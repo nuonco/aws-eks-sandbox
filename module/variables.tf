@@ -26,6 +26,8 @@ variable "deprovision_iam_role_arn" {
 # from configs
 #
 
+# docs: https://docs.aws.amazon.com/eks/latest/userguide/access-policy-permissions.html
+
 # policies and roles
 variable "provision_role_eks_access_entry_policy_associations" {
   type        = map(any)
@@ -50,18 +52,24 @@ variable "maintenance_role_eks_access_entry_policy_associations" {
   type        = map(any)
   description = "EKS Cluster Access Entry Policy Associations for maintenance role."
   default = {
-    cluster_admin = {
-      policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
-      access_scope = {
-        type = "cluster"
-      }
-    }
-    eks_admin = {
-      policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSAdminPolicy"
-      access_scope = {
-        type = "cluster"
-      }
-    }
+    # cluster_admin = {
+    #   policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+    #   access_scope = {
+    #     type = "cluster"
+    #   }
+    # }
+    # eks_admin = {
+    #   policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSAdminPolicy"
+    #   access_scope = {
+    #     type = "cluster"
+    #   }
+    # }
+    # eks_view = {
+    #   policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSViewPolicy"
+    #   access_scope = {
+    #     type = "cluster"
+    #   }
+    # }
   }
 }
 
