@@ -14,5 +14,6 @@ module "nuon_dns" {
 
   depends_on = [
     module.eks,
+    resource.null_resource.set_kubeconfig,
   ]
 }
