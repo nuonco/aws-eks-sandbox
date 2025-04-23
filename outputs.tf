@@ -61,7 +61,6 @@ output "ecr" {
 }
 
 
-# toggleables
 output "nuon_dns" {
   value = {
     enabled         = local.nuon_dns.enabled,
@@ -92,4 +91,5 @@ output "nuon_dns" {
       revision = local.nuon_dns.enabled ? module.nuon_dns[0].ingress_nginx.release.revision : ""
     }
   }
+  description = "A map of Nuon DNS attributes: whether nuon.run has been enabled; AWS Route 53 details for the public_domain and internal_domain; metadata bout the helm charts the module installs on."
 }
