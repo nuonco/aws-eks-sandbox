@@ -49,15 +49,31 @@ variable "deprovision_iam_role_arn" {
 }
 
 #
-# from configs
+# cloudformation outputs
 #
 
 # policies and roles
 variable "provision_role_eks_kubernetes_groups" {
   type        = list(any)
-  description = "List of Kubernetes Groups to add this role to."
+  description = "List of Kubernetes Groups to add this role to. The provision role is assigned to a provision group automatically. These are additional groups."
   default     = []
 }
+
+variable "maintenance_role_eks_kubernetes_groups" {
+  type        = list(any)
+  description = "List of Kubernetes Groups to add this role to. The maintenance role is assigned to a maintenance group automatically. These are additional groups."
+  default     = []
+}
+
+variable "deprovision_role_eks_kubernetes_groups" {
+  type        = list(any)
+  description = "List of Kubernetes Groups to add this role to. The deprovision role is assigned to a deprovision group automatically. These are additional groups."
+  default     = []
+}
+
+#
+# vendor defined via app config
+#
 
 variable "provision_role_eks_access_entry_policy_associations" {
   type        = map(any)
@@ -78,35 +94,24 @@ variable "provision_role_eks_access_entry_policy_associations" {
   }
 }
 
-variable "maintenance_role_eks_kubernetes_groups" {
-  type        = list(any)
-  description = "List of Kubernetes Groups to add this role to."
-  default     = []
-}
-
 variable "maintenance_role_eks_access_entry_policy_associations" {
   type        = map(any)
-  description = "EKS Cluster Access Entry Policy Associations for maintenance role."
-  default = {
-    cluster_admin = {
-      policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
-      access_scope = {
-        type = "cluster"
-      }
-    }
-    eks_admin = {
-      policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSAdminPolicy"
-      access_scope = {
-        type = "cluster"
-      }
-    }
-  }
-}
-
-variable "deprovision_role_eks_kubernetes_groups" {
-  type        = list(any)
-  description = "List of Kubernetes Groups to add this role to."
-  default     = []
+  description = "EKS Cluster Access Entry Policy Associations for maintenance role. Defaults to none meaning permissions are governed by eponymous RBAC group."
+  default     = {}
+  # default = {
+  #   cluster_admin = {
+  #     policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+  #     access_scope = {
+  #       type = "cluster"
+  #     }
+  #   }
+  #   eks_admin = {
+  #     policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSAdminPolicy"
+  #     access_scope = {
+  #       type = "cluster"
+  #     }
+  #   }
+  # }
 }
 
 variable "deprovision_role_eks_access_entry_policy_associations" {
@@ -134,7 +139,7 @@ variable "additional_access_entry" {
   default     = {}
   # default = {
   #   "admin-access-for-org" = {
-  #     principal_arn     = var.admin_access_role,
+  #     principal_arn     = {{ admin_access_role }},
   #     kubernetes_groups = []
   #     policy_associations = {
   #       cluster_admin = {

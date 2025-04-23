@@ -1,7 +1,11 @@
 locals {
   kyverno = {
     namespace  = "kyverno"
-    value_file = "${path.module}/values/kyverno.yaml"
+    value_file = "${path.module}/values/kyverno/values.yaml"
+    default_policies = [
+      "${path.module}/values/kyverno/policies/restrict-binding-system-groups.yaml",
+      "${path.module}/values/kyverno/policies/restrict-secret-role-verbs.yaml",
+    ]
   }
 }
 
@@ -24,10 +28,9 @@ resource "helm_release" "kyverno" {
   ]
 }
 
-resource "kubectl_manifest" "kyverno_policies" {
-  for_each = toset(var.kyverno_policies)
-
-  yaml_body = yamlencode(jsondecode(each.value))
+resource "kubectl_manifest" "default_policies" {
+  for_each  = toset(local.kyverno.default_policies)
+  yaml_body = file(each.value)
 
   depends_on = [
     helm_release.kyverno
