@@ -1,4 +1,4 @@
-# m1 aws-eks-sandbox
+# Nuon AWS EKS Sandbox
 
 Turnkey AWS EKS sandbox for Nuon apps.
 
@@ -95,7 +95,7 @@ Turnkey AWS EKS sandbox for Nuon apps.
 | <a name="output_account"></a> [account](#output_account)    | A map of AWS account attributes: id, region.                                                                                                                                                       |
 | <a name="output_cluster"></a> [cluster](#output_cluster)    | A map of EKS cluster attributes: arn, certificate_authority_data, endpoint, name, platform_version, status, oidc_issuer_url, oidc_provider_arn, cluster_security_group_id, node_security_group_id. |
 | <a name="output_ecr"></a> [ecr](#output_ecr)                | A map of ECR attributes: repository_url, repository_arn, repository_name, registry_id, registry_url.                                                                                               |
-| <a name="output_nuon_dns"></a> [nuon_dns](#output_nuon_dns) | toggleables                                                                                                                                                                                        |
+| <a name="output_nuon_dns"></a> [nuon_dns](#output_nuon_dns) | A map of Nuon DNS attributes: whether nuon.run has been enabled; AWS Route 53 details for the public_domain and internal_domain; metadata bout the helm charts the module installs on.             |
 | <a name="output_vpc"></a> [vpc](#output_vpc)                | A map of vpc attributes: name, id, cidr, azs, private_subnet_cidr_blocks, private_subnet_ids, public_subnet_cidr_blocks, public_subnet_ids, default_security_group_id.                             |
 
 ## Default Helm Charts
