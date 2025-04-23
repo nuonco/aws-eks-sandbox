@@ -161,7 +161,7 @@ variable "additional_access_entry" {
 
 
 variable "kyverno_policies" {
-  type        = list(map(any))
+  type        = list(any)
   description = "A list of kyverno policies."
   default     = []
 }
