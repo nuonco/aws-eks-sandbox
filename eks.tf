@@ -13,23 +13,22 @@ locals {
   default_access_entries = {
     "provision" = {
       principal_arn       = var.provision_iam_role_arn
-      kubernetes_groups   = var.provision_role_eks_kubernetes_groups
+      kubernetes_groups   = concat(["provision"], var.provision_role_eks_kubernetes_groups)
       policy_associations = var.provision_role_eks_access_entry_policy_associations,
-      tags                = local.tags
-    },
-    "deprovision" = {
-      principal_arn       = var.deprovision_iam_role_arn
-      kubernetes_groups   = var.deprovision_role_eks_kubernetes_groups
-      policy_associations = var.deprovision_role_eks_access_entry_policy_associations,
       tags                = local.tags
     },
     "maintenance" = {
       principal_arn       = var.maintenance_iam_role_arn
-      kubernetes_groups   = var.maintenance_role_eks_kubernetes_groups
+      kubernetes_groups   = concat(["maintenance"], var.maintenance_role_eks_kubernetes_groups)
       policy_associations = var.maintenance_role_eks_access_entry_policy_associations,
       tags                = local.tags
-    }
-
+    },
+    "deprovision" = {
+      principal_arn       = var.deprovision_iam_role_arn
+      kubernetes_groups   = concat(["deprovision"], var.deprovision_role_eks_kubernetes_groups)
+      policy_associations = var.deprovision_role_eks_access_entry_policy_associations,
+      tags                = local.tags
+    },
   }
 
   access_entries = merge(local.default_access_entries, var.additional_access_entry)
