@@ -119,10 +119,9 @@ variable "additional_access_entry" {
 }
 
 
-variable "kyverno_policies" {
-  type        = list(any)
-  description = "A list of kyverno policies."
-  default     = []
+variable "kyverno_policy_dir" {
+  type        = string
+  description = "Path to a directory with kyverno policy manifests."
 }
 
 #
