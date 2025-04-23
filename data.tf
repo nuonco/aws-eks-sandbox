@@ -11,7 +11,9 @@ data "aws_subnets" "public" {
   }
 
   tags = {
-    visibility = "public"
+    visibility               = "public"
+    "install.nuon.co/id"     = var.nuon_id
+    "network.nuon.co/domain" = "public"
   }
 }
 
@@ -22,7 +24,9 @@ data "aws_subnets" "private" {
   }
 
   tags = {
-    visibility = "private"
+    visibility               = "private"
+    "network.nuon.co/domain" = "private"
+    "install.nuon.co/id"     = var.nuon_id
   }
 }
 
@@ -33,8 +37,9 @@ data "aws_subnets" "runner" {
   }
 
   tags = {
-    visibility = "private"
-    domain     = "runner"
+    visibility               = "private"
+    "network.nuon.co/domain" = "runner"
+    "install.nuon.co/id"     = var.nuon_id
   }
 }
 
@@ -66,8 +71,8 @@ data "aws_availability_zones" "available" {
 locals {
   subnets = {
     private = {
-      ids   = setsubtract(data.aws_subnets.private.ids, data.aws_subnets.runner.ids),
-      cidrs = setsubtract(values(data.aws_subnet.private)[*].cidr_block, values(data.aws_subnet.runner)[*].cidr_block),
+      ids   = data.aws_subnets.private.ids,
+      cidrs = values(data.aws_subnet.private)[*].cidr_block,
     }
     public = {
       ids   = data.aws_subnets.public.ids,
