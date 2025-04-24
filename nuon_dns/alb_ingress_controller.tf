@@ -78,6 +78,24 @@ resource "helm_release" "alb_ingress_controller" {
     value = "alb-ingress-controller"
   }
 
+  # toleration require to allow these to run on the main karpenter mng ng
+  values = [
+    yamlencode({
+      tolerations = [
+        {
+          key    = "CriticalAddonsOnly"
+          value  = "true"
+          effect = "NoSchedule"
+        },
+        {
+          key    = "karpenter.sh/controller"
+          value  = "true"
+          effect = "NoSchedule"
+        },
+      ]
+    })
+  ]
+
   depends_on = [
     helm_release.cert_manager,
     module.alb_controller_irsa,

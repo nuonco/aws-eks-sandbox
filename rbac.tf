@@ -14,6 +14,5 @@ resource "kubectl_manifest" "maintenance" {
 
   depends_on = [
     module.eks,
-    resource.null_resource.set_kubeconfig
   ]
 }

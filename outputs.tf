@@ -93,3 +93,16 @@ output "nuon_dns" {
   }
   description = "A map of Nuon DNS attributes: whether nuon.run has been enabled; AWS Route 53 details for the public_domain and internal_domain; metadata bout the helm charts the module installs on."
 }
+
+output "karpenter" {
+  value = {
+    instance_profile = {
+      id   = resource.aws_iam_instance_profile.karpenter.id
+      arn  = resource.aws_iam_instance_profile.karpenter.arn
+      name = local.karpenter.instance_profile_name
+    }
+    discovery_key   = local.karpenter.discovery_key
+    discovery_value = local.karpenter.discovery_value
+
+  }
+}

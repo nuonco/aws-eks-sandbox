@@ -4,3 +4,10 @@ triggerLoopOnEvent: true
 policy: sync
 registry: txt
 provider: aws
+tolerations:
+- effect: NoSchedule
+  key: CriticalAddonsOnly
+  value: "true"
+- effect: NoSchedule
+  key: karpenter.sh/controller
+  value: "true"
