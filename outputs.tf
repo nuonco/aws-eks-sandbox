@@ -102,3 +102,16 @@ output "namespaces" {
   value       = [for km in kubectl_manifest.namespaces : km.name]
   description = "A list of namespaces that were created by this module."
 }
+
+output "karpenter" {
+  value = {
+    instance_profile = {
+      id   = resource.aws_iam_instance_profile.karpenter.id
+      arn  = resource.aws_iam_instance_profile.karpenter.arn
+      name = local.karpenter.instance_profile_name
+    }
+    discovery_key   = local.karpenter.discovery_key
+    discovery_value = local.karpenter.discovery_value
+
+  }
+}

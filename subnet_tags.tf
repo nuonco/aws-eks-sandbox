@@ -9,3 +9,11 @@ module "additional_subnet_tags" {
   public_subnet_ids  = local.subnets.public.ids
   depends_on         = [module.eks]
 }
+
+// add karpenter tags
+resource "aws_ec2_tag" "private_subnets_karpenter_tags" {
+  for_each    = toset(local.subnets.private.ids)
+  resource_id = each.value
+  key         = local.karpenter.discovery_key
+  value       = local.karpenter.discovery_value
+}

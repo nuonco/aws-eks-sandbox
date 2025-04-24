@@ -3,7 +3,7 @@ module "nuon_dns" {
 
   providers = {
     kubectl = kubectl.main
-    helm = helm.main
+    helm    = helm.main
   }
 
   source = "./nuon_dns"

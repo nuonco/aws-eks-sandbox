@@ -2,6 +2,18 @@ locals {
   ingress_nginx = {
     namespace = "ingress-nginx"
     name      = "ingress-nginx"
+    tolerations = [
+      {
+        key    = "karpenter.sh/controller"
+        value  = "true"
+        effect = "NoSchedule"
+      },
+      {
+        key : "CriticalAddonsOnly"
+        value : "true"
+        effect : "NoSchedule"
+      },
+    ]
   }
 }
 
@@ -19,6 +31,20 @@ resource "helm_release" "ingress_nginx" {
     name  = "rbac.create"
     value = "true"
   }
+
+  values = [
+    yamlencode({
+      tolerations = local.ingress_nginx.tolerations
+      controller = {
+        tolerations = local.ingress_nginx.tolerations
+        admissionWebhooks = {
+          patch = {
+            tolerations = local.ingress_nginx.tolerations
+          }
+        }
+      }
+    })
+  ]
 
   depends_on = [
     helm_release.alb_ingress_controller

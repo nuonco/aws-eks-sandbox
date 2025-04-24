@@ -45,6 +45,11 @@ resource "helm_release" "ebs_csi" {
         }
         tolerations : [
           {
+            key    = "karpenter.sh/controller"
+            value  = "true"
+            effect = "NoSchedule"
+          },
+          {
             key : "CriticalAddonsOnly"
             value : "true"
             effect : "NoSchedule"
@@ -53,6 +58,7 @@ resource "helm_release" "ebs_csi" {
       }
     }),
   ]
+
 
   depends_on = [
     module.ebs_csi_irsa,

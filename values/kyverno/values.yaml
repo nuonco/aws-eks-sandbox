@@ -38,3 +38,12 @@ cleanupController:
   replicas: 2
 reportsController:
   replicas: 2
+
+global:
+  tolerations:
+  - effect: NoSchedule
+    key: CriticalAddonsOnly
+    value: "true"
+  - effect: NoSchedule
+    key: karpenter.sh/controller
+    value: "true"

@@ -75,7 +75,6 @@ data "aws_security_groups" "runner" {
   }
 }
 
-
 locals {
   subnets = {
     private = {

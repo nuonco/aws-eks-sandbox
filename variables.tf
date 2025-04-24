@@ -9,8 +9,9 @@ locals {
 
   # tags for all of the resources
   default_tags = merge(var.tags, {
-    "install.nuon.co/id"   = var.nuon_id
-    "sandbox.nuon.co/name" = "aws-eks"
+    "install.nuon.co/id"      = var.nuon_id
+    "sandbox.nuon.co/name"    = "aws-eks"
+    "sandbox.nuon.co/variant" = "karpenter"
   })
   tags = merge(
     var.additional_tags,

@@ -7,6 +7,23 @@ resource "helm_release" "metrics_server" {
   chart      = "metrics-server"
   version    = "3.8.2"
 
+  values = [
+    yamlencode({
+      tolerations : [
+        {
+          key    = "karpenter.sh/controller"
+          value  = "true"
+          effect = "NoSchedule"
+        },
+        {
+          key : "CriticalAddonsOnly"
+          value : "true"
+          effect : "NoSchedule"
+        },
+      ]
+    })
+  ]
+
   depends_on = [
     helm_release.ebs_csi
   ]
