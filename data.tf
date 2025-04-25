@@ -68,6 +68,14 @@ data "aws_availability_zones" "available" {
   state = "available"
 }
 
+data "aws_security_groups" "runner" {
+  tags = {
+    "network.nuon.co/domain" = "runner"
+    "install.nuon.co/id"     = var.nuon_id
+  }
+}
+
+
 locals {
   subnets = {
     private = {
