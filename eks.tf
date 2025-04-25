@@ -87,3 +87,16 @@ module "eks" {
 
   tags = local.tags
 }
+
+# TODO: revisit this access method
+resource "aws_security_group_rule" "runner_cluster_access" {
+  type                     = "ingress"
+  description              = "Allow ingress traffic from runner."
+  from_port                = 0
+  to_port                  = 0
+  protocol                 = "-1"
+  security_group_id        = module.eks.cluster_security_group_id
+  source_security_group_id = data.aws_security_groups.runner.ids[0] # make this less brittle
+
+  depends_on = [module.eks]
+}
