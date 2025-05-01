@@ -466,3 +466,56 @@ rules:
   - "*"
   verbs:
   - "*"
+# WIP: superceded by granting EKSClusterAdmin to the maintenance role
+# allow installation of external-secrets operator
+- apiGroups:
+  - ""
+  resourceNames:
+  - external-secrets-operator-webhook
+  resources:
+  - secrets
+  verbs:
+  - '*'
+- apiGroups:
+  - rbac.authorization.k8s.io
+  resourceNames:
+  - external-secrets-operator-cert-controller
+  - external-secrets-operator-controller
+  - external-secrets-operator-edit
+  - external-secrets-operator-servicebindings
+  - external-secrets-operator-view
+  resources:
+  - clusterroles
+  verbs:
+  - '*'
+- apiGroups:
+  - rbac.authorization.k8s.io
+  resourceNames:
+  - external-secrets-operator-cert-controller
+  - external-secrets-operator-controller
+  - external-secrets-operator-edit
+  - external-secrets-operator-servicebindings
+  - external-secrets-operator-view
+  resources:
+  - clusterrolebindings
+  verbs:
+  - '*'
+- apiGroups:
+  - admissionregistration.k8s.io
+  resourceNames:
+  - secretstore-validate
+  - externalsecret-validate
+  resources:
+  - validatingwebhookconfigurations
+  verbs:
+  - '*'
+- apiGroups:
+  - rbac.authorization.k8s.io
+  resourceNames:
+  - external-secrets-operator-cert-controller
+  resources:
+  - clusterroles
+  - clusterrolebindings
+  verbs:
+  - 'create'
+  - '*'

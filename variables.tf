@@ -271,3 +271,13 @@ variable "tags" {
   type        = map(any)
   description = "List of custom tags to add to the install resources. Used for taxonomic purposes."
 }
+
+# NOTE: temporary
+variable "secrets" {
+  type = list(object({
+    arn       = string,
+    namespace = string,
+    name      = string,
+  }))
+  description = "List of secret arns and their target name and namespace. These will be copied from AWS Secret Manager into K8S."
+}
