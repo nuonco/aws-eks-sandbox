@@ -8,6 +8,11 @@ locals {
 }
 
 provider "aws" {
+  region = "us-east-1"
+  alias  = "ecr_public_login"
+}
+
+provider "aws" {
   region = var.region
 
   default_tags {

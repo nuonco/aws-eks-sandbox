@@ -13,7 +13,9 @@ locals {
   }
 }
 
-data "aws_ecr_authorization_token" "token" {}
+data "aws_ecr_authorization_token" "token" {
+  provider = aws.ecr_public_login
+}
 
 
 # NOTE: we use an instance_profile because the role changes between provisions
