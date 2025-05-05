@@ -13,6 +13,8 @@ locals {
   }
 }
 
+data "aws_ecr_authorization_token" "token" {}
+
 
 # NOTE: we use an instance_profile because the role changes between provisions
 #       but the role is immutable on the ec2nodeclass
@@ -58,6 +60,9 @@ resource "helm_release" "karpenter_crd" {
   name       = "karpenter-crd"
   repository = "oci://public.ecr.aws/karpenter"
   version    = local.karpenter.version
+
+  repository_username = data.aws_ecr_authorization_token.token.user_name
+  repository_password = data.aws_ecr_authorization_token.token.password
 
   wait = true
 
