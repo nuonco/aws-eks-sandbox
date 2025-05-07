@@ -20,7 +20,7 @@ resource "kubectl_manifest" "secret_namespaces" {
 module "secrets" {
   for_each = {
     for index, secret in var.secrets :
-    secret.arn => secret
+    "${secret.namespace}:${secret.name}" => secret
   }
 
   source = "./secrets"
