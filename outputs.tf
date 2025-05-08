@@ -18,8 +18,13 @@ output "cluster" {
     status                     = module.eks.cluster_status
     oidc_issuer_url            = module.eks.cluster_oidc_issuer_url
     oidc_provider_arn          = module.eks.oidc_provider_arn
-    cluster_security_group_id  = module.eks.cluster_security_group_id
-    node_security_group_id     = module.eks.node_security_group_id
+    oidc_provider              = module.eks.oidc_provider
+
+    cluster_security_group_id = module.eks.cluster_security_group_id
+    node_security_group_id    = module.eks.node_security_group_id
+
+    default_node_iam_role_arn  = module.eks.eks_managed_node_groups["default"].iam_role_arn
+    default_node_iam_role_name = module.eks.eks_managed_node_groups["default"].iam_role_name
   }
   description = "A map of EKS cluster attributes: arn, certificate_authority_data, endpoint, name, platform_version, status, oidc_issuer_url, oidc_provider_arn, cluster_security_group_id, node_security_group_id."
 }
