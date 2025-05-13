@@ -19,15 +19,17 @@ Turnkey AWS EKS sandbox for Nuon apps.
 | <a name="provider_aws"></a> [aws](#provider_aws)             | 5.94.1  |
 | <a name="provider_helm"></a> [helm](#provider_helm)          | 2.17.0  |
 | <a name="provider_kubectl"></a> [kubectl](#provider_kubectl) | 1.19.0  |
+| <a name="provider_null"></a> [null](#provider_null)          | 3.2.3   |
 
 ## Modules
 
-| Name                                                                    | Source                                                                   | Version    |
-| ----------------------------------------------------------------------- | ------------------------------------------------------------------------ | ---------- |
-| <a name="module_ebs_csi_irsa"></a> [ebs_csi_irsa](#module_ebs_csi_irsa) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks | ~> 5.0     |
-| <a name="module_ecr"></a> [ecr](#module_ecr)                            | terraform-aws-modules/ecr/aws                                            | >= 2.4.0   |
-| <a name="module_eks"></a> [eks](#module_eks)                            | terraform-aws-modules/eks/aws                                            | ~> 20.35.0 |
-| <a name="module_nuon_dns"></a> [nuon_dns](#module_nuon_dns)             | ./nuon_dns                                                               | n/a        |
+| Name                                                                                                  | Source                                                                   | Version    |
+| ----------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ | ---------- |
+| <a name="module_additional_subnet_tags"></a> [additional_subnet_tags](#module_additional_subnet_tags) | ./subnet_tags                                                            | n/a        |
+| <a name="module_ebs_csi_irsa"></a> [ebs_csi_irsa](#module_ebs_csi_irsa)                               | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks | ~> 5.0     |
+| <a name="module_ecr"></a> [ecr](#module_ecr)                                                          | terraform-aws-modules/ecr/aws                                            | >= 2.4.0   |
+| <a name="module_eks"></a> [eks](#module_eks)                                                          | terraform-aws-modules/eks/aws                                            | ~> 20.35.0 |
+| <a name="module_nuon_dns"></a> [nuon_dns](#module_nuon_dns)                                           | ./nuon_dns                                                               | n/a        |
 
 ## Resources
 
@@ -38,16 +40,19 @@ Turnkey AWS EKS sandbox for Nuon apps.
 | [aws_iam_role_policy_attachment.ecr_access_maintenance](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource    |
 | [aws_iam_role_policy_attachment.ecr_access_provision](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment)   | resource    |
 | [aws_kms_key.eks](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/kms_key)                                                          | resource    |
+| [aws_security_group_rule.runner_cluster_access](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule)                | resource    |
 | [helm_release.ebs_csi](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release)                                                    | resource    |
 | [helm_release.kyverno](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release)                                                    | resource    |
 | [helm_release.metrics_server](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release)                                             | resource    |
 | [kubectl_manifest.default_policies](https://registry.terraform.io/providers/gavinbunney/kubectl/latest/docs/resources/manifest)                                 | resource    |
 | [kubectl_manifest.maintenance](https://registry.terraform.io/providers/gavinbunney/kubectl/latest/docs/resources/manifest)                                      | resource    |
 | [kubectl_manifest.vendor_policies](https://registry.terraform.io/providers/gavinbunney/kubectl/latest/docs/resources/manifest)                                  | resource    |
+| [null_resource.set_kubeconfig](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource)                                           | resource    |
 | [aws_availability_zones.available](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/availability_zones)                           | data source |
 | [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity)                                   | data source |
 | [aws_iam_policy_document.ecr](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document)                               | data source |
 | [aws_security_group.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/security_group)                                     | data source |
+| [aws_security_groups.runner](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/security_groups)                                    | data source |
 | [aws_subnet.private](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/subnet)                                                     | data source |
 | [aws_subnet.public](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/subnet)                                                      | data source |
 | [aws_subnet.runner](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/subnet)                                                      | data source |
@@ -69,8 +74,6 @@ Turnkey AWS EKS sandbox for Nuon apps.
 | <a name="input_deprovision_role_eks_access_entry_policy_associations"></a> [deprovision_role_eks_access_entry_policy_associations](#input_deprovision_role_eks_access_entry_policy_associations) | EKS Cluster Access Entry Policy Associations for deprovision role.                                                                                 | `map(any)`  | <pre>{<br/> "cluster_admin": {<br/> "access_scope": {<br/> "type": "cluster"<br/> },<br/> "policy_arn": "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"<br/> },<br/> "eks_admin": {<br/> "access_scope": {<br/> "type": "cluster"<br/> },<br/> "policy_arn": "arn:aws:eks::aws:cluster-access-policy/AmazonEKSAdminPolicy"<br/> }<br/>}</pre> |    no    |
 | <a name="input_deprovision_role_eks_kubernetes_groups"></a> [deprovision_role_eks_kubernetes_groups](#input_deprovision_role_eks_kubernetes_groups)                                              | List of Kubernetes Groups to add this role to. The deprovision role is assigned to a deprovision group automatically. These are additional groups. | `list(any)` | `[]`                                                                                                                                                                                                                                                                                                                                                               |    no    |
 | <a name="input_desired_size"></a> [desired_size](#input_desired_size)                                                                                                                            | The desired number of nodes in the managed node group.                                                                                             | `number`    | `3`                                                                                                                                                                                                                                                                                                                                                                |    no    |
-| <a name="input_enable_alb_ingress_controller"></a> [enable_alb_ingress_controller](#input_enable_alb_ingress_controller)                                                                         | Whether or not the ALB Ingress helm chart should be installed.                                                                                     | `string`    | `"false"`                                                                                                                                                                                                                                                                                                                                                          |    no    |
-| <a name="input_enable_ingress_nginx"></a> [enable_ingress_nginx](#input_enable_ingress_nginx)                                                                                                    | Whether or not the Ingress-Nginx helm chart should be installed.                                                                                   | `string`    | `"false"`                                                                                                                                                                                                                                                                                                                                                          |    no    |
 | <a name="input_enable_nuon_dns"></a> [enable_nuon_dns](#input_enable_nuon_dns)                                                                                                                   | Whether or not the cluster should use a nuon-provided nuon.run domain. Controls the cert-manager-issuer and the route_53_zone.                     | `string`    | `"false"`                                                                                                                                                                                                                                                                                                                                                          |    no    |
 | <a name="input_internal_root_domain"></a> [internal_root_domain](#input_internal_root_domain)                                                                                                    | The internal root domain.                                                                                                                          | `string`    | n/a                                                                                                                                                                                                                                                                                                                                                                |   yes    |
 | <a name="input_kyverno_policy_dir"></a> [kyverno_policy_dir](#input_kyverno_policy_dir)                                                                                                          | Path to a directory with kyverno policy manifests.                                                                                                 | `string`    | n/a                                                                                                                                                                                                                                                                                                                                                                |   yes    |
@@ -106,11 +109,10 @@ Turnkey AWS EKS sandbox for Nuon apps.
 
 ## [Optional] Nuon DNS
 
-Nuon offers the option to provision complementary `nuon.run` domains for ease of
-use. To enable the nuon dns, set `enable_nuon_dns` to `true` or `1`.
+Nuon offers the option to provision complementary `nuon.run` domains for ease of use. To enable the nuon dns, set
+`enable_nuon_dns` to `true` or `1`.
 
-Note: The domain names are provided by Nuon automatically and cannot be
-customized.
+Note: The domain names are provided by Nuon automatically and cannot be customized.
 
 ### Resources
 
@@ -127,5 +129,4 @@ And the following AWS Resources will be created.
 
 - Route 53 Zone
 
-Additionally, some default internal and public cert issuers (`cert-manager`) are
-created.
+Additionally, some default internal and public cert issuers (`cert-manager`) are created.
