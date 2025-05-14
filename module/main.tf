@@ -11,6 +11,7 @@ module "nuon-aws-eks-sandbox" {
   deprovision_role_eks_access_entry_policy_associations = var.deprovision_role_eks_access_entry_policy_associations
 
   additional_access_entry = var.additional_access_entry
+  additional_namespaces   = var.additional_namespaces
 
   kyverno_policy_dir = var.kyverno_policy_dir
 

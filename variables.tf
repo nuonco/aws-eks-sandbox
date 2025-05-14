@@ -214,6 +214,12 @@ variable "additional_tags" {
   default     = {}
 }
 
+variable "additional_namespaces" {
+  type        = list(string)
+  description = "A list of namespaces that should be created on the cluster. The `{{.nuon.install.id}}` namespace is created by default."
+  default     = []
+}
+
 #
 # toggle-able components
 #

@@ -1,0 +1,19 @@
+# create some default namespaces
+locals {
+  namespaces = concat([var.nuon_id], var.additional_namespaces)
+}
+
+resource "kubectl_manifest" "namespaces" {
+  for_each = toset(local.namespaces)
+  yaml_body = yamlencode({
+    apiVersion = "v1"
+    kind       = "Namespace"
+    metadata = {
+      name = each.value
+    }
+  })
+
+  depends_on = [
+    module.eks
+  ]
+}

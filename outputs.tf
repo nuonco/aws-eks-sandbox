@@ -93,3 +93,8 @@ output "nuon_dns" {
   }
   description = "A map of Nuon DNS attributes: whether nuon.run has been enabled; AWS Route 53 details for the public_domain and internal_domain; metadata bout the helm charts the module installs on."
 }
+
+output "namespaces" {
+  value       = [for km in kubectl_manifest.namespaces : km.name]
+  description = "A list of namespaces that were created by this module."
+}
