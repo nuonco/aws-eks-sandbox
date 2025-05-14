@@ -225,19 +225,6 @@ variable "enable_nuon_dns" {
   description = "Whether or not the cluster should use a nuon-provided nuon.run domain. Controls the cert-manager-issuer and the route_53_zone."
 }
 
-variable "enable_alb_ingress_controller" {
-  type        = string
-  default     = "false"
-  description = "Whether or not the ALB Ingress helm chart should be installed."
-}
-
-variable "enable_ingress_nginx" {
-  type        = string
-  default     = "false"
-  description = "Whether or not the Ingress-Nginx helm chart should be installed."
-}
-
-
 # toggle-able helm charts
 # TODO
 
