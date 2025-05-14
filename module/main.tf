@@ -13,6 +13,8 @@ module "nuon-aws-eks-sandbox" {
   additional_access_entry = var.additional_access_entry
   additional_namespaces   = var.additional_namespaces
 
+  maintenance_cluster_role_rules_override = var.maintenance_cluster_role_rules_override
+
   kyverno_policy_dir = var.kyverno_policy_dir
 
   # cluster
