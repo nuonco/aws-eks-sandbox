@@ -49,7 +49,7 @@ variable "deprovision_iam_role_arn" {
 }
 
 #
-# cloudformation outputs
+# values from cloudformation install stack
 #
 
 # policies and roles
@@ -159,6 +159,17 @@ variable "additional_access_entry" {
   # }
 }
 
+# maintenance role RBAC
+variable "maintenance_cluster_role_rules_override" {
+  type = list(object({
+    apiGroups = list(string),
+    resources = list(string),
+    verbs     = list(string)
+  }))
+  description = "A list of rules for the ClusterRole definition for the maintenance group. If this value is provided, these rules will be used instead."
+  default     = []
+}
+
 
 variable "kyverno_policy_dir" {
   type        = string
@@ -231,13 +242,10 @@ variable "enable_nuon_dns" {
   description = "Whether or not the cluster should use a nuon-provided nuon.run domain. Controls the cert-manager-issuer and the route_53_zone."
 }
 
-# toggle-able helm charts
-# TODO
-
 #
 # set by nuon
 #
-#
+
 variable "nuon_id" {
   type        = string
   description = "The nuon id for this install. Used for naming purposes."
