@@ -34,6 +34,11 @@ module "external_dns_irsa" {
   }
 
   tags = var.tags
+
+  depends_on = [
+    resource.aws_route53_zone.internal,
+    resource.aws_route53_zone.public
+  ]
 }
 
 resource "helm_release" "external_dns" {
@@ -79,5 +84,7 @@ resource "helm_release" "external_dns" {
 
   depends_on = [
     module.external_dns_irsa,
+    resource.aws_route53_zone.internal,
+    resource.aws_route53_zone.public
   ]
 }

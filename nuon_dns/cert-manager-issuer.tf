@@ -42,7 +42,9 @@ resource "kubectl_manifest" "internal_cluster_issuer" {
   })
 
   depends_on = [
-    helm_release.cert_manager
+    helm_release.cert_manager,
+    resource.aws_route53_zone.internal,
+    resource.aws_route53_zone.public
   ]
 }
 
@@ -80,6 +82,8 @@ resource "kubectl_manifest" "public_cluster_issuer" {
     }
   })
   depends_on = [
-    helm_release.cert_manager
+    helm_release.cert_manager,
+    resource.aws_route53_zone.internal,
+    resource.aws_route53_zone.public
   ]
 }

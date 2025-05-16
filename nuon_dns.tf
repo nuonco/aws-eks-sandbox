@@ -12,6 +12,12 @@ module "nuon_dns" {
   nuon_id               = var.nuon_id
   tags                  = var.tags
 
+  providers = {
+    helm       = helm
+    kubectl    = kubectl
+    kubernetes = kubernetes
+  }
+
   depends_on = [
     module.eks,
     resource.null_resource.set_kubeconfig,
