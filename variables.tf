@@ -174,6 +174,7 @@ variable "maintenance_cluster_role_rules_override" {
 variable "kyverno_policy_dir" {
   type        = string
   description = "Path to a directory with kyverno policy manifests."
+  default     = "./policies"
 }
 
 #
