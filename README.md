@@ -49,7 +49,6 @@ Turnkey AWS EKS sandbox for Nuon apps.
 | [kubectl_manifest.maintenance_role_binding](https://registry.terraform.io/providers/gavinbunney/kubectl/latest/docs/resources/manifest)                         | resource    |
 | [kubectl_manifest.namespaces](https://registry.terraform.io/providers/gavinbunney/kubectl/latest/docs/resources/manifest)                                       | resource    |
 | [kubectl_manifest.vendor_policies](https://registry.terraform.io/providers/gavinbunney/kubectl/latest/docs/resources/manifest)                                  | resource    |
-| [null_resource.set_kubeconfig](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource)                                           | resource    |
 | [aws_availability_zones.available](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/availability_zones)                           | data source |
 | [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity)                                   | data source |
 | [aws_iam_policy_document.ecr](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document)                               | data source |

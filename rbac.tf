@@ -21,7 +21,6 @@ resource "kubectl_manifest" "maintenance" {
   })
   depends_on = [
     module.eks,
-    resource.null_resource.set_kubeconfig
   ]
 }
 
@@ -29,6 +28,5 @@ resource "kubectl_manifest" "maintenance_role_binding" {
   yaml_body = file(local.groups.maintenance.role_binding)
   depends_on = [
     module.eks,
-    resource.null_resource.set_kubeconfig
   ]
 }

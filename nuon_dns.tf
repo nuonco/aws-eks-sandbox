@@ -13,7 +13,6 @@ module "nuon_dns" {
   tags                  = var.tags
 
   depends_on = [
-    module.eks,
-    resource.null_resource.set_kubeconfig,
+    module.eks
   ]
 }
