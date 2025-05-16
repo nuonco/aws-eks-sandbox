@@ -1,10 +1,10 @@
 locals {
-  k8s_exec = [{
+  k8s_exec = {
     api_version = "client.authentication.k8s.io/v1beta1"
     command     = "aws-iam-authenticator"
     # This requires the aws iam authenticator to be installed locally where Terraform is executed
-    args = ["token", "-i", module.eks.cluster_name]
-  }]
+    args = ["token", "--region", var.region, "-i", module.eks.cluster_name]
+  }
 }
 
 provider "aws" {
@@ -19,13 +19,10 @@ provider "kubernetes" {
   host                   = module.eks.cluster_endpoint
   cluster_ca_certificate = base64decode(module.eks.cluster_certificate_authority_data)
 
-  dynamic "exec" {
-    for_each = local.k8s_exec
-    content {
-      api_version = exec.value.api_version
-      command     = exec.value.command
-      args        = exec.value.args
-    }
+  exec {
+    api_version = local.k8s_exec.api_version
+    command     = local.k8s_exec.command
+    args        = local.k8s_exec.args
   }
 }
 
@@ -34,13 +31,10 @@ provider "helm" {
     host                   = module.eks.cluster_endpoint
     cluster_ca_certificate = base64decode(module.eks.cluster_certificate_authority_data)
 
-    dynamic "exec" {
-      for_each = local.k8s_exec
-      content {
-        api_version = exec.value.api_version
-        command     = exec.value.command
-        args        = exec.value.args
-      }
+    exec {
+      api_version = local.k8s_exec.api_version
+      command     = local.k8s_exec.command
+      args        = local.k8s_exec.args
     }
   }
 }
@@ -51,12 +45,9 @@ provider "kubectl" {
   cluster_ca_certificate = base64decode(module.eks.cluster_certificate_authority_data)
   load_config_file       = false
 
-  dynamic "exec" {
-    for_each = local.k8s_exec
-    content {
-      api_version = exec.value.api_version
-      command     = exec.value.command
-      args        = exec.value.args
-    }
+  exec {
+    api_version = local.k8s_exec.api_version
+    command     = local.k8s_exec.command
+    args        = local.k8s_exec.args
   }
 }
