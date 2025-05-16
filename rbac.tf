@@ -2,10 +2,9 @@
 locals {
   groups = {
     maintenance = {
-      default_role = "${path.module}/values/k8s/maintenance_role.yaml"
-      role_binding = "${path.module}/values/k8s/maintenance_rb.yaml"
-
-      labels = length(var.maintenance_cluster_role_rules_override) > 0 ? { "nuon.co/source" : "customer-defined" } : { "nuon.co/source" : "sandbox-defaults" }
+      labels        = length(var.maintenance_cluster_role_rules_override) > 0 ? { "nuon.co/source" : "customer-defined" } : { "nuon.co/source" : "sandbox-defaults" }
+      role_binding  = "${path.module}/values/k8s/maintenance_rb.yaml"
+      default_rules = yamldecode(file("${path.module}/values/k8s/maintenance_role.yaml")).rules
     }
   }
 }
@@ -18,7 +17,7 @@ resource "kubectl_manifest" "maintenance" {
       "name"   = "maintenance"
       "labels" = local.groups.maintenance.labels
     }
-    "rules" = length(var.maintenance_cluster_role_rules_override) > 0 ? var.maintenance_cluster_role_rules_override : yamldecode(file(local.groups.maintenance.default_role)).rules
+    "rules" = length(var.maintenance_cluster_role_rules_override) > 0 ? var.maintenance_cluster_role_rules_override : tolist(local.groups.maintenance.default_rules)
   })
   depends_on = [
     module.eks,
