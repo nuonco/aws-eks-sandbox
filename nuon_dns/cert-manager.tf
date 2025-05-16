@@ -25,6 +25,11 @@ module "cert_manager_irsa" {
   }
 
   tags = var.tags
+
+  depends_on = [
+    resource.aws_route53_zone.internal,
+    resource.aws_route53_zone.public
+  ]
 }
 
 resource "helm_release" "cert_manager" {
@@ -53,5 +58,7 @@ resource "helm_release" "cert_manager" {
 
   depends_on = [
     module.cert_manager_irsa,
+    resource.aws_route53_zone.internal,
+    resource.aws_route53_zone.public
   ]
 }
