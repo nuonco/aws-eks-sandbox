@@ -10,6 +10,8 @@ locals {
 }
 
 resource "kubectl_manifest" "maintenance" {
+  provider = kubectl.main
+
   yaml_body = yamlencode({
     "apiVersion" = "rbac.authorization.k8s.io/v1"
     "kind"       = "ClusterRole"
@@ -25,6 +27,8 @@ resource "kubectl_manifest" "maintenance" {
 }
 
 resource "kubectl_manifest" "maintenance_role_binding" {
+  provider = kubectl.main
+
   yaml_body = file(local.groups.maintenance.role_binding)
   depends_on = [
     module.eks,

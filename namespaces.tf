@@ -4,6 +4,8 @@ locals {
 }
 
 resource "kubectl_manifest" "namespaces" {
+  provider = kubectl.main
+
   for_each = toset(local.namespaces)
   yaml_body = yamlencode({
     apiVersion = "v1"
