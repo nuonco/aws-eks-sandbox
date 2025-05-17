@@ -57,6 +57,5 @@ resource "helm_release" "ebs_csi" {
   depends_on = [
     module.ebs_csi_irsa,
     module.eks,
-    resource.null_resource.set_kubeconfig
   ]
 }
