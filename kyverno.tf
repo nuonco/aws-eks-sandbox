@@ -11,6 +11,8 @@ locals {
 
 // install kyverno
 resource "helm_release" "kyverno" {
+  provider = helm.main
+
   namespace        = "kyverno"
   create_namespace = true
 
@@ -29,6 +31,8 @@ resource "helm_release" "kyverno" {
 }
 
 resource "kubectl_manifest" "default_policies" {
+  provider = kubectl.main
+
   for_each  = toset(local.kyverno.default_policies)
   yaml_body = file(each.value)
 
@@ -38,6 +42,8 @@ resource "kubectl_manifest" "default_policies" {
 }
 
 resource "kubectl_manifest" "vendor_policies" {
+  provider = kubectl.main
+
   for_each = fileset(var.kyverno_policy_dir, "*.yaml")
 
   yaml_body = file("${var.kyverno_policy_dir}/${each.key}")
