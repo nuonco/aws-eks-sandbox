@@ -1,9 +1,9 @@
 locals {
   k8s_exec = {
     api_version = "client.authentication.k8s.io/v1beta1"
-    command     = "aws-iam-authenticator"
+    command     = "aws"
     # This requires the aws iam authenticator to be installed locally where Terraform is executed
-    args = ["token", "--region", var.region, "-i", module.eks.cluster_name]
+    args = ["eks", "get-token", "--region", var.region, "--cluster-name", module.eks.cluster_name]
   }
 }
 
