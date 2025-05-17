@@ -1,6 +1,11 @@
 module "nuon_dns" {
   count = local.nuon_dns.enabled ? 1 : 0
 
+  providers = {
+    kubectl = kubectl.main
+    helm = helm.main
+  }
+
   source = "./nuon_dns"
 
   internal_root_domain  = var.internal_root_domain
