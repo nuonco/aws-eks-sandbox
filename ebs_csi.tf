@@ -31,6 +31,8 @@ resource "helm_release" "ebs_csi" {
   chart      = "aws-ebs-csi-driver"
   version    = "2.16.0"
 
+  provider = helm.main
+
   values = [
     yamlencode({
       node : {
