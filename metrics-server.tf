@@ -7,6 +7,8 @@ resource "helm_release" "metrics_server" {
   chart      = "metrics-server"
   version    = "3.8.2"
 
+  provider = helm.main
+
   depends_on = [
     helm_release.ebs_csi
   ]
