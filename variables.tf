@@ -162,9 +162,10 @@ variable "additional_access_entry" {
 # maintenance role RBAC
 variable "maintenance_cluster_role_rules_override" {
   type = list(object({
-    apiGroups = list(string),
-    resources = list(string),
-    verbs     = list(string)
+    apiGroups     = list(string),
+    resources     = list(string),
+    verbs         = list(string),
+    resourceNames = optional(list(string)),
   }))
   description = "A list of rules for the ClusterRole definition for the maintenance group. If this value is provided, these rules will be used instead."
   default     = []
