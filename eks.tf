@@ -85,6 +85,8 @@ module "eks" {
     }
   }
 
+  eks_managed_node_group_defaults = var.eks_managed_node_group_defaults
+
   tags = local.tags
 }
 
