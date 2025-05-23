@@ -102,3 +102,7 @@ output "namespaces" {
   value       = [for km in kubectl_manifest.namespaces : km.name]
   description = "A list of namespaces that were created by this module."
 }
+
+output "additional_irsa" {
+  value = { for ai in module.additional_irsa : ai.iam_role_name => ai }
+}
