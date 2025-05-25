@@ -3,7 +3,7 @@ module "nuon_dns" {
 
   providers = {
     kubectl = kubectl.main
-    helm = helm.main
+    helm    = helm.main
   }
 
   source = "./nuon_dns"
@@ -18,6 +18,7 @@ module "nuon_dns" {
   tags                  = var.tags
 
   depends_on = [
-    module.eks
+    module.eks,
+    resource.aws_security_group_rule.runner_cluster_access,
   ]
 }
