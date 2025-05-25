@@ -10,6 +10,7 @@ resource "helm_release" "metrics_server" {
   provider = helm.main
 
   depends_on = [
-    helm_release.ebs_csi
+    module.eks,
+    resource.aws_security_group_rule.runner_cluster_access,
   ]
 }
