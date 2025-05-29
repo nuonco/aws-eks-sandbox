@@ -246,6 +246,12 @@ variable "additional_namespaces" {
   default     = []
 }
 
+variable "helm_driver" {
+  type        = string
+  description = "One of 'configmap' or 'secret'"
+  default     = "secret"
+}
+
 #
 # toggle-able components
 #
