@@ -220,6 +220,12 @@ variable "default_instance_type" {
   description = "The EC2 instance type to use for the EKS cluster's default node group."
 }
 
+variable "eks_managed_node_group_defaults" {
+  type        = any
+  default     = {}
+  description = "Map of EKS managed node group default configurations. Useful for configuring things like block device mapping."
+}
+
 
 variable "additional_tags" {
   type        = map(any)
