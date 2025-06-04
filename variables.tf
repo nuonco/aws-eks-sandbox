@@ -172,10 +172,23 @@ variable "maintenance_cluster_role_rules_override" {
 }
 
 
+# kyverno policies
 variable "kyverno_policy_dir" {
   type        = string
   description = "Path to a directory with kyverno policy manifests."
   default     = "./kyverno-policies"
+}
+
+# additional IRSAs
+variable "additional_irsas" {
+  # name and serviceaccount are combined in oids.k8s.namespace_service_accounts as ["${var.namespace}:${serviceaccount}"]
+  type = list(object({
+    role_name       = string,
+    namespace       = string,
+    service_account = string,
+  }))
+  description = "List of additional IRSA accounts to create."
+  default     = []
 }
 
 #
