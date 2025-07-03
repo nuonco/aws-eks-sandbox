@@ -88,6 +88,7 @@ done
 echo "Fetching ALBs tagged with $TAG_KEY: $TAG_VALUE..."
 LB_ARNS=$(aws elbv2 describe-load-balancers --query "LoadBalancers[].LoadBalancerArn" --output text )
 
+# TODO: filter using `--filters` instead of in jq
 for LB_ARN in $LB_ARNS; do
     TAGS=$(aws elbv2 describe-tags --resource-arns "$LB_ARN" --query "TagDescriptions[].Tags[]" --output json)
 
@@ -136,6 +137,11 @@ delete_vpc_resources() {
 }
 
 # Iterate over all VPCs and delete resources
+for vpc_id in $VPC_IDS; do
+    delete_vpc_resources "$vpc_id"
+done
+
+# NOTE: we run this twice since the sg's that reference each other may complicate things on the first run
 for vpc_id in $VPC_IDS; do
     delete_vpc_resources "$vpc_id"
 done
