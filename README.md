@@ -2,15 +2,15 @@
 
 Turnkey AWS EKS sandbox for Nuon apps.
 
-## Requirements
+# Requirements
 
-| Name                                                                        | Version   |
-| --------------------------------------------------------------------------- | --------- |
-| <a name="requirement_terraform"></a> [terraform](#requirement_terraform)    | >= 1.7.5  |
-| <a name="requirement_aws"></a> [aws](#requirement_aws)                      | >= 5.94.1 |
-| <a name="requirement_helm"></a> [helm](#requirement_helm)                   | >= 2.17.0 |
-| <a name="requirement_kubectl"></a> [kubectl](#requirement_kubectl)          | >= 1.19   |
-| <a name="requirement_kubernetes"></a> [kubernetes](#requirement_kubernetes) | >= 2.36.0 |
+| Name                                                                        | Version  |
+| --------------------------------------------------------------------------- | -------- |
+| <a name="requirement_terraform"></a> [terraform](#requirement_terraform)    | >= 1.7.5 |
+| <a name="requirement_aws"></a> [aws](#requirement_aws)                      | = 5.94.1 |
+| <a name="requirement_helm"></a> [helm](#requirement_helm)                   | = 2.17.0 |
+| <a name="requirement_kubectl"></a> [kubectl](#requirement_kubectl)          | = 1.19   |
+| <a name="requirement_kubernetes"></a> [kubernetes](#requirement_kubernetes) | = 2.36.0 |
 
 ## Providers
 
@@ -24,6 +24,7 @@ Turnkey AWS EKS sandbox for Nuon apps.
 
 | Name                                                                                                  | Source                                                                   | Version    |
 | ----------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ | ---------- |
+| <a name="module_additional_irsa"></a> [additional_irsa](#module_additional_irsa)                      | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks | ~> 5.0     |
 | <a name="module_additional_subnet_tags"></a> [additional_subnet_tags](#module_additional_subnet_tags) | ./subnet_tags                                                            | n/a        |
 | <a name="module_ebs_csi_irsa"></a> [ebs_csi_irsa](#module_ebs_csi_irsa)                               | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks | ~> 5.0     |
 | <a name="module_ecr"></a> [ecr](#module_ecr)                                                          | terraform-aws-modules/ecr/aws                                            | >= 2.4.0   |
@@ -34,38 +35,39 @@ Turnkey AWS EKS sandbox for Nuon apps.
 
 | Name                                                                                                                                                            | Type        |
 | --------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
-| [aws_iam_policy.ecr_access](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy)                                             | resource    |
-| [aws_iam_role_policy_attachment.ecr_access_deprovision](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource    |
-| [aws_iam_role_policy_attachment.ecr_access_maintenance](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource    |
-| [aws_iam_role_policy_attachment.ecr_access_provision](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment)   | resource    |
-| [aws_kms_key.eks](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/kms_key)                                                          | resource    |
-| [aws_security_group_rule.runner_cluster_access](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule)                | resource    |
-| [helm_release.ebs_csi](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release)                                                    | resource    |
-| [helm_release.kyverno](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release)                                                    | resource    |
-| [helm_release.metrics_server](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release)                                             | resource    |
-| [kubectl_manifest.default_policies](https://registry.terraform.io/providers/gavinbunney/kubectl/latest/docs/resources/manifest)                                 | resource    |
-| [kubectl_manifest.maintenance](https://registry.terraform.io/providers/gavinbunney/kubectl/latest/docs/resources/manifest)                                      | resource    |
-| [kubectl_manifest.maintenance_role_binding](https://registry.terraform.io/providers/gavinbunney/kubectl/latest/docs/resources/manifest)                         | resource    |
-| [kubectl_manifest.namespaces](https://registry.terraform.io/providers/gavinbunney/kubectl/latest/docs/resources/manifest)                                       | resource    |
-| [kubectl_manifest.vendor_policies](https://registry.terraform.io/providers/gavinbunney/kubectl/latest/docs/resources/manifest)                                  | resource    |
-| [aws_availability_zones.available](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/availability_zones)                           | data source |
-| [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity)                                   | data source |
-| [aws_iam_policy_document.ecr](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document)                               | data source |
-| [aws_security_group.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/security_group)                                     | data source |
-| [aws_security_groups.runner](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/security_groups)                                    | data source |
-| [aws_subnet.private](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/subnet)                                                     | data source |
-| [aws_subnet.public](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/subnet)                                                      | data source |
-| [aws_subnet.runner](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/subnet)                                                      | data source |
-| [aws_subnets.private](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/subnets)                                                   | data source |
-| [aws_subnets.public](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/subnets)                                                    | data source |
-| [aws_subnets.runner](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/subnets)                                                    | data source |
-| [aws_vpc.vpc](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/vpc)                                                               | data source |
+| [aws_iam_policy.ecr_access](https://registry.terraform.io/providers/hashicorp/aws/5.94.1/docs/resources/iam_policy)                                             | resource    |
+| [aws_iam_role_policy_attachment.ecr_access_deprovision](https://registry.terraform.io/providers/hashicorp/aws/5.94.1/docs/resources/iam_role_policy_attachment) | resource    |
+| [aws_iam_role_policy_attachment.ecr_access_maintenance](https://registry.terraform.io/providers/hashicorp/aws/5.94.1/docs/resources/iam_role_policy_attachment) | resource    |
+| [aws_iam_role_policy_attachment.ecr_access_provision](https://registry.terraform.io/providers/hashicorp/aws/5.94.1/docs/resources/iam_role_policy_attachment)   | resource    |
+| [aws_kms_key.eks](https://registry.terraform.io/providers/hashicorp/aws/5.94.1/docs/resources/kms_key)                                                          | resource    |
+| [aws_security_group_rule.runner_cluster_access](https://registry.terraform.io/providers/hashicorp/aws/5.94.1/docs/resources/security_group_rule)                | resource    |
+| [helm_release.ebs_csi](https://registry.terraform.io/providers/hashicorp/helm/2.17.0/docs/resources/release)                                                    | resource    |
+| [helm_release.kyverno](https://registry.terraform.io/providers/hashicorp/helm/2.17.0/docs/resources/release)                                                    | resource    |
+| [helm_release.metrics_server](https://registry.terraform.io/providers/hashicorp/helm/2.17.0/docs/resources/release)                                             | resource    |
+| [kubectl_manifest.default_policies](https://registry.terraform.io/providers/gavinbunney/kubectl/1.19/docs/resources/manifest)                                   | resource    |
+| [kubectl_manifest.maintenance](https://registry.terraform.io/providers/gavinbunney/kubectl/1.19/docs/resources/manifest)                                        | resource    |
+| [kubectl_manifest.maintenance_role_binding](https://registry.terraform.io/providers/gavinbunney/kubectl/1.19/docs/resources/manifest)                           | resource    |
+| [kubectl_manifest.namespaces](https://registry.terraform.io/providers/gavinbunney/kubectl/1.19/docs/resources/manifest)                                         | resource    |
+| [kubectl_manifest.vendor_policies](https://registry.terraform.io/providers/gavinbunney/kubectl/1.19/docs/resources/manifest)                                    | resource    |
+| [aws_availability_zones.available](https://registry.terraform.io/providers/hashicorp/aws/5.94.1/docs/data-sources/availability_zones)                           | data source |
+| [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/5.94.1/docs/data-sources/caller_identity)                                   | data source |
+| [aws_iam_policy_document.ecr](https://registry.terraform.io/providers/hashicorp/aws/5.94.1/docs/data-sources/iam_policy_document)                               | data source |
+| [aws_security_group.default](https://registry.terraform.io/providers/hashicorp/aws/5.94.1/docs/data-sources/security_group)                                     | data source |
+| [aws_security_groups.runner](https://registry.terraform.io/providers/hashicorp/aws/5.94.1/docs/data-sources/security_groups)                                    | data source |
+| [aws_subnet.private](https://registry.terraform.io/providers/hashicorp/aws/5.94.1/docs/data-sources/subnet)                                                     | data source |
+| [aws_subnet.public](https://registry.terraform.io/providers/hashicorp/aws/5.94.1/docs/data-sources/subnet)                                                      | data source |
+| [aws_subnet.runner](https://registry.terraform.io/providers/hashicorp/aws/5.94.1/docs/data-sources/subnet)                                                      | data source |
+| [aws_subnets.private](https://registry.terraform.io/providers/hashicorp/aws/5.94.1/docs/data-sources/subnets)                                                   | data source |
+| [aws_subnets.public](https://registry.terraform.io/providers/hashicorp/aws/5.94.1/docs/data-sources/subnets)                                                    | data source |
+| [aws_subnets.runner](https://registry.terraform.io/providers/hashicorp/aws/5.94.1/docs/data-sources/subnets)                                                    | data source |
+| [aws_vpc.vpc](https://registry.terraform.io/providers/hashicorp/aws/5.94.1/docs/data-sources/vpc)                                                               | data source |
 
 ## Inputs
 
 | Name                                                                                                                                                                                             | Description                                                                                                                                        | Type                                                                                                                                                                    | Default                                                                                                                                                                                                                                                                                                                                                            | Required |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :------: |
 | <a name="input_additional_access_entry"></a> [additional_access_entry](#input_additional_access_entry)                                                                                           | A single access entry. Useful when providing access to an additional role.                                                                         | `map(any)`                                                                                                                                                              | `{}`                                                                                                                                                                                                                                                                                                                                                               |    no    |
+| <a name="input_additional_irsas"></a> [additional_irsas](#input_additional_irsas)                                                                                                                | List of additional IRSA accounts to create.                                                                                                        | <pre>list(object({<br/> role_name = string,<br/> namespace = string,<br/> service_account = string,<br/> }))</pre>                                                      | `[]`                                                                                                                                                                                                                                                                                                                                                               |    no    |
 | <a name="input_additional_namespaces"></a> [additional_namespaces](#input_additional_namespaces)                                                                                                 | A list of namespaces that should be created on the cluster. The `{{.nuon.install.id}}` namespace is created by default.                            | `list(string)`                                                                                                                                                          | `[]`                                                                                                                                                                                                                                                                                                                                                               |    no    |
 | <a name="input_additional_tags"></a> [additional_tags](#input_additional_tags)                                                                                                                   | Extra tags to append to the default tags that will be added to install resources.                                                                  | `map(any)`                                                                                                                                                              | `{}`                                                                                                                                                                                                                                                                                                                                                               |    no    |
 | <a name="input_cluster_name"></a> [cluster_name](#input_cluster_name)                                                                                                                            | The name of the EKS cluster. If not provided, the install ID will be used by default.                                                              | `string`                                                                                                                                                                | `""`                                                                                                                                                                                                                                                                                                                                                               |    no    |
@@ -96,14 +98,15 @@ Turnkey AWS EKS sandbox for Nuon apps.
 
 ## Outputs
 
-| Name                                                              | Description                                                                                                                                                                                        |
-| ----------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| <a name="output_account"></a> [account](#output_account)          | A map of AWS account attributes: id, region.                                                                                                                                                       |
-| <a name="output_cluster"></a> [cluster](#output_cluster)          | A map of EKS cluster attributes: arn, certificate_authority_data, endpoint, name, platform_version, status, oidc_issuer_url, oidc_provider_arn, cluster_security_group_id, node_security_group_id. |
-| <a name="output_ecr"></a> [ecr](#output_ecr)                      | A map of ECR attributes: repository_url, repository_arn, repository_name, registry_id, registry_url.                                                                                               |
-| <a name="output_namespaces"></a> [namespaces](#output_namespaces) | A list of namespaces that were created by this module.                                                                                                                                             |
-| <a name="output_nuon_dns"></a> [nuon_dns](#output_nuon_dns)       | A map of Nuon DNS attributes: whether nuon.run has been enabled; AWS Route 53 details for the public_domain and internal_domain; metadata bout the helm charts the module installs on.             |
-| <a name="output_vpc"></a> [vpc](#output_vpc)                      | A map of vpc attributes: name, id, cidr, azs, private_subnet_cidr_blocks, private_subnet_ids, public_subnet_cidr_blocks, public_subnet_ids, default_security_group_id.                             |
+| Name                                                                             | Description                                                                                                                                                                                        |
+| -------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| <a name="output_account"></a> [account](#output_account)                         | A map of AWS account attributes: id, region.                                                                                                                                                       |
+| <a name="output_additional_irsa"></a> [additional_irsa](#output_additional_irsa) | n/a                                                                                                                                                                                                |
+| <a name="output_cluster"></a> [cluster](#output_cluster)                         | A map of EKS cluster attributes: arn, certificate_authority_data, endpoint, name, platform_version, status, oidc_issuer_url, oidc_provider_arn, cluster_security_group_id, node_security_group_id. |
+| <a name="output_ecr"></a> [ecr](#output_ecr)                                     | A map of ECR attributes: repository_url, repository_arn, repository_name, registry_id, registry_url.                                                                                               |
+| <a name="output_namespaces"></a> [namespaces](#output_namespaces)                | A list of namespaces that were created by this module.                                                                                                                                             |
+| <a name="output_nuon_dns"></a> [nuon_dns](#output_nuon_dns)                      | A map of Nuon DNS attributes: whether nuon.run has been enabled; AWS Route 53 details for the public_domain and internal_domain; metadata bout the helm charts the module installs on.             |
+| <a name="output_vpc"></a> [vpc](#output_vpc)                                     | A map of vpc attributes: name, id, cidr, azs, private_subnet_cidr_blocks, private_subnet_ids, public_subnet_cidr_blocks, public_subnet_ids, default_security_group_id.                             |
 
 ## Default Helm Charts
 
