@@ -57,9 +57,10 @@ module "eks" {
   }
 
   cluster_addons = {
-    coredns                = {}
-    eks-pod-identity-agent = {}
-    kube-proxy             = {}
+    // NOTE: disabled for a test
+    // eks-pod-identity-agent = {}
+    coredns    = {}
+    kube-proxy = {}
     vpc-cni = {
       most_recent = true
       preserve    = true
@@ -84,6 +85,8 @@ module "eks" {
       }
     }
   }
+
+  eks_managed_node_group_defaults = var.eks_managed_node_group_defaults
 
   tags = local.tags
 }
