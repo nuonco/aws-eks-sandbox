@@ -38,10 +38,9 @@ cleanupController:
   replicas: 2
 reportsController:
   replicas: 2
-config:
-  webhooksCleanup:
-    image:
-      repository: bitnamilegacy/kubectl
-  policyReportsCleanup:
-    image:
-      repository: bitnamilegacy/kubectl
+webhooksCleanup:
+  image:
+    repository: bitnamilegacy/kubectl
+policyReportsCleanup:
+  image:
+    repository: bitnamilegacy/kubectl
