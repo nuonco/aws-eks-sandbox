@@ -2,7 +2,11 @@
 
 Turnkey AWS EKS sandbox for Nuon apps.
 
-# Requirements
+<!--terraform-docs markdown table . --output-file README.md-->
+<!--npx prettier --write README.md-->
+<!-- BEGIN_TF_DOCS -->
+
+## Requirements
 
 | Name                                                                        | Version  |
 | --------------------------------------------------------------------------- | -------- |
@@ -22,14 +26,14 @@ Turnkey AWS EKS sandbox for Nuon apps.
 
 ## Modules
 
-| Name                                                                                                  | Source                                                                   | Version    |
-| ----------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ | ---------- |
-| <a name="module_additional_irsa"></a> [additional_irsa](#module_additional_irsa)                      | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks | ~> 5.0     |
-| <a name="module_additional_subnet_tags"></a> [additional_subnet_tags](#module_additional_subnet_tags) | ./subnet_tags                                                            | n/a        |
-| <a name="module_ebs_csi_irsa"></a> [ebs_csi_irsa](#module_ebs_csi_irsa)                               | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks | ~> 5.0     |
-| <a name="module_ecr"></a> [ecr](#module_ecr)                                                          | terraform-aws-modules/ecr/aws                                            | >= 2.4.0   |
-| <a name="module_eks"></a> [eks](#module_eks)                                                          | terraform-aws-modules/eks/aws                                            | ~> 20.35.0 |
-| <a name="module_nuon_dns"></a> [nuon_dns](#module_nuon_dns)                                           | ./nuon_dns                                                               | n/a        |
+| Name                                                                                                  | Source                                                                   | Version |
+| ----------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ | ------- |
+| <a name="module_additional_irsa"></a> [additional_irsa](#module_additional_irsa)                      | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks | ~> 5.0  |
+| <a name="module_additional_subnet_tags"></a> [additional_subnet_tags](#module_additional_subnet_tags) | ./subnet_tags                                                            | n/a     |
+| <a name="module_ebs_csi_irsa"></a> [ebs_csi_irsa](#module_ebs_csi_irsa)                               | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks | 5.0     |
+| <a name="module_ecr"></a> [ecr](#module_ecr)                                                          | terraform-aws-modules/ecr/aws                                            | 2.4.0   |
+| <a name="module_eks"></a> [eks](#module_eks)                                                          | terraform-aws-modules/eks/aws                                            | 20.35.0 |
+| <a name="module_nuon_dns"></a> [nuon_dns](#module_nuon_dns)                                           | ./nuon_dns                                                               | n/a     |
 
 ## Resources
 
@@ -70,6 +74,7 @@ Turnkey AWS EKS sandbox for Nuon apps.
 | <a name="input_additional_irsas"></a> [additional_irsas](#input_additional_irsas)                                                                                                                | List of additional IRSA accounts to create.                                                                                                        | <pre>list(object({<br/> role_name = string,<br/> namespace = string,<br/> service_account = string,<br/> }))</pre>                                                      | `[]`                                                                                                                                                                                                                                                                                                                                                               |    no    |
 | <a name="input_additional_namespaces"></a> [additional_namespaces](#input_additional_namespaces)                                                                                                 | A list of namespaces that should be created on the cluster. The `{{.nuon.install.id}}` namespace is created by default.                            | `list(string)`                                                                                                                                                          | `[]`                                                                                                                                                                                                                                                                                                                                                               |    no    |
 | <a name="input_additional_tags"></a> [additional_tags](#input_additional_tags)                                                                                                                   | Extra tags to append to the default tags that will be added to install resources.                                                                  | `map(any)`                                                                                                                                                              | `{}`                                                                                                                                                                                                                                                                                                                                                               |    no    |
+| <a name="input_cluster_endpoint_public_access"></a> [cluster_endpoint_public_access](#input_cluster_endpoint_public_access)                                                                      | Whether the EKS cluster API server endpoint is publicly accessible.                                                                                | `bool`                                                                                                                                                                  | `false`                                                                                                                                                                                                                                                                                                                                                            |    no    |
 | <a name="input_cluster_name"></a> [cluster_name](#input_cluster_name)                                                                                                                            | The name of the EKS cluster. If not provided, the install ID will be used by default.                                                              | `string`                                                                                                                                                                | `""`                                                                                                                                                                                                                                                                                                                                                               |    no    |
 | <a name="input_cluster_version"></a> [cluster_version](#input_cluster_version)                                                                                                                   | The Kubernetes version to use for the EKS cluster.                                                                                                 | `string`                                                                                                                                                                | `"1.32"`                                                                                                                                                                                                                                                                                                                                                           |    no    |
 | <a name="input_default_instance_type"></a> [default_instance_type](#input_default_instance_type)                                                                                                 | The EC2 instance type to use for the EKS cluster's default node group.                                                                             | `string`                                                                                                                                                                | `"t3a.medium"`                                                                                                                                                                                                                                                                                                                                                     |    no    |
@@ -108,32 +113,4 @@ Turnkey AWS EKS sandbox for Nuon apps.
 | <a name="output_nuon_dns"></a> [nuon_dns](#output_nuon_dns)                      | A map of Nuon DNS attributes: whether nuon.run has been enabled; AWS Route 53 details for the public_domain and internal_domain; metadata bout the helm charts the module installs on.             |
 | <a name="output_vpc"></a> [vpc](#output_vpc)                                     | A map of vpc attributes: name, id, cidr, azs, private_subnet_cidr_blocks, private_subnet_ids, public_subnet_cidr_blocks, public_subnet_ids, default_security_group_id.                             |
 
-## Default Helm Charts
-
-1. EBS CSI
-2. Metrics Server
-3. Kyverno
-
-## [Optional] Nuon DNS
-
-Nuon offers the option to provision complementary `nuon.run` domains for ease of use. To enable the nuon dns, set
-`enable_nuon_dns` to `true` or `1`.
-
-Note: The domain names are provided by Nuon automatically and cannot be customized.
-
-### Resources
-
-When Nuon DNS is enabled, the following Helm Charts are installed.
-
-| Chart                    | Version  |
-| ------------------------ | -------- |
-| `alb-ingress-controller` | `1.12.0` |
-| `cert-manager`           | `1.11.0` |
-| `external-dns`           | `1.12.0` |
-| `ingress-nginx`          | `4.12.1` |
-
-And the following AWS Resources will be created.
-
-- Route 53 Zone
-
-Additionally, some default internal and public cert issuers (`cert-manager`) are created.
+<!-- END_TF_DOCS -->
