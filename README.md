@@ -137,3 +137,112 @@ And the following AWS Resources will be created.
 - Route 53 Zone
 
 Additionally, some default internal and public cert issuers (`cert-manager`) are created.
+
+<!-- BEGIN_TF_DOCS -->
+## Requirements
+
+| Name | Version |
+|------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.7.5 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | = 5.94.1 |
+| <a name="requirement_helm"></a> [helm](#requirement\_helm) | = 2.17.0 |
+| <a name="requirement_kubectl"></a> [kubectl](#requirement\_kubectl) | = 1.19 |
+| <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | = 2.36.0 |
+
+## Providers
+
+| Name | Version |
+|------|---------|
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 5.94.1 |
+| <a name="provider_helm.main"></a> [helm.main](#provider\_helm.main) | 2.17.0 |
+| <a name="provider_kubectl.main"></a> [kubectl.main](#provider\_kubectl.main) | 1.19.0 |
+
+## Modules
+
+| Name | Source | Version |
+|------|--------|---------|
+| <a name="module_additional_irsa"></a> [additional\_irsa](#module\_additional\_irsa) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks | ~> 5.0 |
+| <a name="module_additional_subnet_tags"></a> [additional\_subnet\_tags](#module\_additional\_subnet\_tags) | ./subnet_tags | n/a |
+| <a name="module_ebs_csi_irsa"></a> [ebs\_csi\_irsa](#module\_ebs\_csi\_irsa) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks | 5.0 |
+| <a name="module_ecr"></a> [ecr](#module\_ecr) | terraform-aws-modules/ecr/aws | 2.4.0 |
+| <a name="module_eks"></a> [eks](#module\_eks) | terraform-aws-modules/eks/aws | 20.35.0 |
+| <a name="module_nuon_dns"></a> [nuon\_dns](#module\_nuon\_dns) | ./nuon_dns | n/a |
+
+## Resources
+
+| Name | Type |
+|------|------|
+| [aws_iam_policy.ecr_access](https://registry.terraform.io/providers/hashicorp/aws/5.94.1/docs/resources/iam_policy) | resource |
+| [aws_iam_role_policy_attachment.ecr_access_deprovision](https://registry.terraform.io/providers/hashicorp/aws/5.94.1/docs/resources/iam_role_policy_attachment) | resource |
+| [aws_iam_role_policy_attachment.ecr_access_maintenance](https://registry.terraform.io/providers/hashicorp/aws/5.94.1/docs/resources/iam_role_policy_attachment) | resource |
+| [aws_iam_role_policy_attachment.ecr_access_provision](https://registry.terraform.io/providers/hashicorp/aws/5.94.1/docs/resources/iam_role_policy_attachment) | resource |
+| [aws_kms_key.eks](https://registry.terraform.io/providers/hashicorp/aws/5.94.1/docs/resources/kms_key) | resource |
+| [aws_security_group_rule.runner_cluster_access](https://registry.terraform.io/providers/hashicorp/aws/5.94.1/docs/resources/security_group_rule) | resource |
+| [helm_release.ebs_csi](https://registry.terraform.io/providers/hashicorp/helm/2.17.0/docs/resources/release) | resource |
+| [helm_release.kyverno](https://registry.terraform.io/providers/hashicorp/helm/2.17.0/docs/resources/release) | resource |
+| [helm_release.metrics_server](https://registry.terraform.io/providers/hashicorp/helm/2.17.0/docs/resources/release) | resource |
+| [kubectl_manifest.default_policies](https://registry.terraform.io/providers/gavinbunney/kubectl/1.19/docs/resources/manifest) | resource |
+| [kubectl_manifest.maintenance](https://registry.terraform.io/providers/gavinbunney/kubectl/1.19/docs/resources/manifest) | resource |
+| [kubectl_manifest.maintenance_role_binding](https://registry.terraform.io/providers/gavinbunney/kubectl/1.19/docs/resources/manifest) | resource |
+| [kubectl_manifest.namespaces](https://registry.terraform.io/providers/gavinbunney/kubectl/1.19/docs/resources/manifest) | resource |
+| [kubectl_manifest.vendor_policies](https://registry.terraform.io/providers/gavinbunney/kubectl/1.19/docs/resources/manifest) | resource |
+| [aws_availability_zones.available](https://registry.terraform.io/providers/hashicorp/aws/5.94.1/docs/data-sources/availability_zones) | data source |
+| [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/5.94.1/docs/data-sources/caller_identity) | data source |
+| [aws_iam_policy_document.ecr](https://registry.terraform.io/providers/hashicorp/aws/5.94.1/docs/data-sources/iam_policy_document) | data source |
+| [aws_security_group.default](https://registry.terraform.io/providers/hashicorp/aws/5.94.1/docs/data-sources/security_group) | data source |
+| [aws_security_groups.runner](https://registry.terraform.io/providers/hashicorp/aws/5.94.1/docs/data-sources/security_groups) | data source |
+| [aws_subnet.private](https://registry.terraform.io/providers/hashicorp/aws/5.94.1/docs/data-sources/subnet) | data source |
+| [aws_subnet.public](https://registry.terraform.io/providers/hashicorp/aws/5.94.1/docs/data-sources/subnet) | data source |
+| [aws_subnet.runner](https://registry.terraform.io/providers/hashicorp/aws/5.94.1/docs/data-sources/subnet) | data source |
+| [aws_subnets.private](https://registry.terraform.io/providers/hashicorp/aws/5.94.1/docs/data-sources/subnets) | data source |
+| [aws_subnets.public](https://registry.terraform.io/providers/hashicorp/aws/5.94.1/docs/data-sources/subnets) | data source |
+| [aws_subnets.runner](https://registry.terraform.io/providers/hashicorp/aws/5.94.1/docs/data-sources/subnets) | data source |
+| [aws_vpc.vpc](https://registry.terraform.io/providers/hashicorp/aws/5.94.1/docs/data-sources/vpc) | data source |
+
+## Inputs
+
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| <a name="input_additional_access_entry"></a> [additional\_access\_entry](#input\_additional\_access\_entry) | A single access entry. Useful when providing access to an additional role. | `map(any)` | `{}` | no |
+| <a name="input_additional_irsas"></a> [additional\_irsas](#input\_additional\_irsas) | List of additional IRSA accounts to create. | <pre>list(object({<br/>    role_name       = string,<br/>    namespace       = string,<br/>    service_account = string,<br/>  }))</pre> | `[]` | no |
+| <a name="input_additional_namespaces"></a> [additional\_namespaces](#input\_additional\_namespaces) | A list of namespaces that should be created on the cluster. The `{{.nuon.install.id}}` namespace is created by default. | `list(string)` | `[]` | no |
+| <a name="input_additional_tags"></a> [additional\_tags](#input\_additional\_tags) | Extra tags to append to the default tags that will be added to install resources. | `map(any)` | `{}` | no |
+| <a name="input_cluster_endpoint_public_access"></a> [cluster\_endpoint\_public\_access](#input\_cluster\_endpoint\_public\_access) | Whether the EKS cluster API server endpoint is publicly accessible. | `bool` | `false` | no |
+| <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | The name of the EKS cluster. If not provided, the install ID will be used by default. | `string` | `""` | no |
+| <a name="input_cluster_version"></a> [cluster\_version](#input\_cluster\_version) | The Kubernetes version to use for the EKS cluster. | `string` | `"1.32"` | no |
+| <a name="input_default_instance_type"></a> [default\_instance\_type](#input\_default\_instance\_type) | The EC2 instance type to use for the EKS cluster's default node group. | `string` | `"t3a.medium"` | no |
+| <a name="input_deprovision_iam_role_arn"></a> [deprovision\_iam\_role\_arn](#input\_deprovision\_iam\_role\_arn) | The deprovision IAM Role ARN | `string` | n/a | yes |
+| <a name="input_deprovision_role_eks_access_entry_policy_associations"></a> [deprovision\_role\_eks\_access\_entry\_policy\_associations](#input\_deprovision\_role\_eks\_access\_entry\_policy\_associations) | EKS Cluster Access Entry Policy Associations for deprovision role. | `map(any)` | <pre>{<br/>  "cluster_admin": {<br/>    "access_scope": {<br/>      "type": "cluster"<br/>    },<br/>    "policy_arn": "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"<br/>  },<br/>  "eks_admin": {<br/>    "access_scope": {<br/>      "type": "cluster"<br/>    },<br/>    "policy_arn": "arn:aws:eks::aws:cluster-access-policy/AmazonEKSAdminPolicy"<br/>  }<br/>}</pre> | no |
+| <a name="input_deprovision_role_eks_kubernetes_groups"></a> [deprovision\_role\_eks\_kubernetes\_groups](#input\_deprovision\_role\_eks\_kubernetes\_groups) | List of Kubernetes Groups to add this role to. The deprovision role is assigned to a deprovision group automatically. These are additional groups. | `list(any)` | `[]` | no |
+| <a name="input_desired_size"></a> [desired\_size](#input\_desired\_size) | The desired number of nodes in the managed node group. | `number` | `3` | no |
+| <a name="input_enable_nuon_dns"></a> [enable\_nuon\_dns](#input\_enable\_nuon\_dns) | Whether or not the cluster should use a nuon-provided nuon.run domain. Controls the cert-manager-issuer and the route\_53\_zone. | `string` | `"false"` | no |
+| <a name="input_helm_driver"></a> [helm\_driver](#input\_helm\_driver) | One of 'configmap' or 'secret' | `string` | `"secret"` | no |
+| <a name="input_internal_root_domain"></a> [internal\_root\_domain](#input\_internal\_root\_domain) | The internal root domain. | `string` | n/a | yes |
+| <a name="input_kyverno_policy_dir"></a> [kyverno\_policy\_dir](#input\_kyverno\_policy\_dir) | Path to a directory with kyverno policy manifests. | `string` | `"./kyverno-policies"` | no |
+| <a name="input_maintenance_cluster_role_rules_override"></a> [maintenance\_cluster\_role\_rules\_override](#input\_maintenance\_cluster\_role\_rules\_override) | A list of rules for the ClusterRole definition for the maintenance group. If this value is provided, these rules will be used instead. | <pre>list(object({<br/>    apiGroups     = list(string),<br/>    resources     = list(string),<br/>    verbs         = list(string),<br/>    resourceNames = optional(list(string)),<br/>  }))</pre> | `[]` | no |
+| <a name="input_maintenance_iam_role_arn"></a> [maintenance\_iam\_role\_arn](#input\_maintenance\_iam\_role\_arn) | The provision IAM Role ARN | `string` | n/a | yes |
+| <a name="input_maintenance_role_eks_access_entry_policy_associations"></a> [maintenance\_role\_eks\_access\_entry\_policy\_associations](#input\_maintenance\_role\_eks\_access\_entry\_policy\_associations) | EKS Cluster Access Entry Policy Associations for maintenance role. Defaults to none meaning permissions are governed by eponymous RBAC group. | `map(any)` | `{}` | no |
+| <a name="input_maintenance_role_eks_kubernetes_groups"></a> [maintenance\_role\_eks\_kubernetes\_groups](#input\_maintenance\_role\_eks\_kubernetes\_groups) | List of Kubernetes Groups to add this role to. The maintenance role is assigned to a maintenance group automatically. These are additional groups. | `list(any)` | `[]` | no |
+| <a name="input_max_size"></a> [max\_size](#input\_max\_size) | The maximum number of nodes in the managed node group. | `number` | `5` | no |
+| <a name="input_min_size"></a> [min\_size](#input\_min\_size) | The minimum number of nodes in the managed node group. | `number` | `2` | no |
+| <a name="input_nuon_id"></a> [nuon\_id](#input\_nuon\_id) | The nuon id for this install. Used for naming purposes. | `string` | n/a | yes |
+| <a name="input_provision_iam_role_arn"></a> [provision\_iam\_role\_arn](#input\_provision\_iam\_role\_arn) | The maintenance IAM Role ARN | `string` | n/a | yes |
+| <a name="input_provision_role_eks_access_entry_policy_associations"></a> [provision\_role\_eks\_access\_entry\_policy\_associations](#input\_provision\_role\_eks\_access\_entry\_policy\_associations) | EKS Cluster Access Entry Policy Associations for provision role. | `map(any)` | <pre>{<br/>  "cluster_admin": {<br/>    "access_scope": {<br/>      "type": "cluster"<br/>    },<br/>    "policy_arn": "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"<br/>  },<br/>  "eks_admin": {<br/>    "access_scope": {<br/>      "type": "cluster"<br/>    },<br/>    "policy_arn": "arn:aws:eks::aws:cluster-access-policy/AmazonEKSAdminPolicy"<br/>  }<br/>}</pre> | no |
+| <a name="input_provision_role_eks_kubernetes_groups"></a> [provision\_role\_eks\_kubernetes\_groups](#input\_provision\_role\_eks\_kubernetes\_groups) | List of Kubernetes Groups to add this role to. The provision role is assigned to a provision group automatically. These are additional groups. | `list(any)` | `[]` | no |
+| <a name="input_public_root_domain"></a> [public\_root\_domain](#input\_public\_root\_domain) | The public root domain. | `string` | n/a | yes |
+| <a name="input_region"></a> [region](#input\_region) | The region to launch the cluster in. | `string` | n/a | yes |
+| <a name="input_tags"></a> [tags](#input\_tags) | List of custom tags to add to the install resources. Used for taxonomic purposes. | `map(any)` | n/a | yes |
+| <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | The ID of the AWS VPC to provision the sandbox in. | `string` | n/a | yes |
+
+## Outputs
+
+| Name | Description |
+|------|-------------|
+| <a name="output_account"></a> [account](#output\_account) | A map of AWS account attributes: id, region. |
+| <a name="output_additional_irsa"></a> [additional\_irsa](#output\_additional\_irsa) | n/a |
+| <a name="output_cluster"></a> [cluster](#output\_cluster) | A map of EKS cluster attributes: arn, certificate\_authority\_data, endpoint, name, platform\_version, status, oidc\_issuer\_url, oidc\_provider\_arn, cluster\_security\_group\_id, node\_security\_group\_id. |
+| <a name="output_ecr"></a> [ecr](#output\_ecr) | A map of ECR attributes: repository\_url, repository\_arn, repository\_name, registry\_id, registry\_url. |
+| <a name="output_namespaces"></a> [namespaces](#output\_namespaces) | A list of namespaces that were created by this module. |
+| <a name="output_nuon_dns"></a> [nuon\_dns](#output\_nuon\_dns) | A map of Nuon DNS attributes: whether nuon.run has been enabled; AWS Route 53 details for the public\_domain and internal\_domain; metadata bout the helm charts the module installs on. |
+| <a name="output_vpc"></a> [vpc](#output\_vpc) | A map of vpc attributes: name, id, cidr, azs, private\_subnet\_cidr\_blocks, private\_subnet\_ids, public\_subnet\_cidr\_blocks, public\_subnet\_ids, default\_security\_group\_id. |
+<!-- END_TF_DOCS -->
