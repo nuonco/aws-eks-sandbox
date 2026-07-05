@@ -1,10 +1,15 @@
 locals {
   # nuon dns
-  enable_nuon_dns = contains(["1", "true"], var.enable_nuon_dns)
   nuon_dns = {
-    enabled              = local.enable_nuon_dns
+    enabled              = contains(["1", "true"], var.enable_nuon_dns)
     internal_root_domain = var.internal_root_domain
     public_root_domain   = var.public_root_domain
+
+    # per-component toggles for the helm charts within the nuon_dns module
+    enable_ingress_nginx          = contains(["1", "true"], var.enable_ingress_nginx)
+    enable_cert_manager           = contains(["1", "true"], var.enable_cert_manager)
+    enable_alb_ingress_controller = contains(["1", "true"], var.enable_alb_ingress_controller)
+    enable_external_dns           = contains(["1", "true"], var.enable_external_dns)
   }
 
   # tags for all of the resources
@@ -18,10 +23,10 @@ locals {
   )
 
   roles = {
-    provision_iam_role_name    = split("/", var.provision_iam_role_arn)[length(split("/", var.provision_iam_role_arn)) - 1]
-    deprovision_iam_role_name  = split("/", var.deprovision_iam_role_arn)[length(split("/", var.deprovision_iam_role_arn)) - 1]
-    maintenance_iam_role_name  = split("/", var.maintenance_iam_role_arn)[length(split("/", var.maintenance_iam_role_arn)) - 1]
-    break_glass_iam_role_name  = var.break_glass_iam_role_arn != "" ? split("/", var.break_glass_iam_role_arn)[length(split("/", var.break_glass_iam_role_arn)) - 1] : ""
+    provision_iam_role_name   = split("/", var.provision_iam_role_arn)[length(split("/", var.provision_iam_role_arn)) - 1]
+    deprovision_iam_role_name = split("/", var.deprovision_iam_role_arn)[length(split("/", var.deprovision_iam_role_arn)) - 1]
+    maintenance_iam_role_name = split("/", var.maintenance_iam_role_arn)[length(split("/", var.maintenance_iam_role_arn)) - 1]
+    break_glass_iam_role_name = var.break_glass_iam_role_arn != "" ? split("/", var.break_glass_iam_role_arn)[length(split("/", var.break_glass_iam_role_arn)) - 1] : ""
   }
 }
 
@@ -299,6 +304,31 @@ variable "enable_nuon_dns" {
   type        = string
   default     = "false"
   description = "Whether or not the cluster should use a nuon-provided nuon.run domain. Controls the cert-manager-issuer and the route_53_zone."
+}
+
+# toggle-able helm charts within the nuon_dns module
+variable "enable_ingress_nginx" {
+  type        = string
+  default     = "true"
+  description = "Whether or not to deploy the ingress-nginx helm release within the nuon_dns module."
+}
+
+variable "enable_cert_manager" {
+  type        = string
+  default     = "true"
+  description = "Whether or not to deploy the cert-manager helm release, its IRSA role, and the cert-manager cluster issuers within the nuon_dns module."
+}
+
+variable "enable_alb_ingress_controller" {
+  type        = string
+  default     = "true"
+  description = "Whether or not to deploy the aws-load-balancer-controller helm release and its IRSA role within the nuon_dns module."
+}
+
+variable "enable_external_dns" {
+  type        = string
+  default     = "true"
+  description = "Whether or not to deploy the external-dns helm release and its IRSA role within the nuon_dns module."
 }
 
 #
