@@ -202,7 +202,29 @@ variable "enable_nuon_dns" {
 }
 
 # toggle-able helm charts
-# TODO
+variable "enable_ingress_nginx" {
+  type        = string
+  default     = "true"
+  description = "Whether or not to deploy the ingress-nginx helm release within the nuon_dns module."
+}
+
+variable "enable_cert_manager" {
+  type        = string
+  default     = "true"
+  description = "Whether or not to deploy the cert-manager helm release, its IRSA role, and the cert-manager cluster issuers within the nuon_dns module."
+}
+
+variable "enable_alb_ingress_controller" {
+  type        = string
+  default     = "true"
+  description = "Whether or not to deploy the aws-load-balancer-controller helm release and its IRSA role within the nuon_dns module."
+}
+
+variable "enable_external_dns" {
+  type        = string
+  default     = "true"
+  description = "Whether or not to deploy the external-dns helm release and its IRSA role within the nuon_dns module."
+}
 
 #
 # set by nuon

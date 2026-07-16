@@ -6,6 +6,8 @@ locals {
 }
 
 resource "helm_release" "ingress_nginx" {
+  count = var.enable_ingress_nginx ? 1 : 0
+
   namespace        = local.ingress_nginx.namespace
   create_namespace = true
 

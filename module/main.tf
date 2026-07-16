@@ -26,7 +26,11 @@ module "nuon-aws-eks-sandbox" {
   default_instance_type = var.default_instance_type
 
   # toggleable components
-  enable_nuon_dns = var.enable_nuon_dns
+  enable_nuon_dns               = var.enable_nuon_dns
+  enable_ingress_nginx          = var.enable_ingress_nginx
+  enable_cert_manager           = var.enable_cert_manager
+  enable_alb_ingress_controller = var.enable_alb_ingress_controller
+  enable_external_dns           = var.enable_external_dns
 
   # provided by nuon
   nuon_id              = var.nuon_id

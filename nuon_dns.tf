@@ -17,6 +17,11 @@ module "nuon_dns" {
   nuon_id               = var.nuon_id
   tags                  = var.tags
 
+  enable_ingress_nginx          = local.nuon_dns.enable_ingress_nginx
+  enable_cert_manager           = local.nuon_dns.enable_cert_manager
+  enable_alb_ingress_controller = local.nuon_dns.enable_alb_ingress_controller
+  enable_external_dns           = local.nuon_dns.enable_external_dns
+
   depends_on = [
     module.eks,
     resource.aws_security_group_rule.runner_cluster_access,
