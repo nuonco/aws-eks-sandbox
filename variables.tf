@@ -276,6 +276,12 @@ variable "default_instance_type" {
   description = "The EC2 instance type to use for the EKS cluster's default node group."
 }
 
+variable "disk_size" {
+  type        = number
+  default     = 20
+  description = "The disk size (in GiB) for each node in the managed node group."
+}
+
 
 variable "additional_tags" {
   type        = map(any)

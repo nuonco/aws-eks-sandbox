@@ -6,6 +6,7 @@ locals {
   min_size       = var.min_size
   max_size       = var.max_size
   desired_size   = var.desired_size
+  disk_size      = var.disk_size
 
   // access entries
   // three roles in play: provision, deprovision, maintenance
@@ -87,6 +88,7 @@ module "eks" {
       min_size       = local.min_size
       max_size       = local.max_size
       desired_size   = local.desired_size
+      disk_size      = local.disk_size
 
       iam_role_additional_policies = {
         additional = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
