@@ -18,10 +18,10 @@ locals {
   )
 
   roles = {
-    provision_iam_role_name    = split("/", var.provision_iam_role_arn)[length(split("/", var.provision_iam_role_arn)) - 1]
-    deprovision_iam_role_name  = split("/", var.deprovision_iam_role_arn)[length(split("/", var.deprovision_iam_role_arn)) - 1]
-    maintenance_iam_role_name  = split("/", var.maintenance_iam_role_arn)[length(split("/", var.maintenance_iam_role_arn)) - 1]
-    break_glass_iam_role_name  = var.break_glass_iam_role_arn != "" ? split("/", var.break_glass_iam_role_arn)[length(split("/", var.break_glass_iam_role_arn)) - 1] : ""
+    provision_iam_role_name   = split("/", var.provision_iam_role_arn)[length(split("/", var.provision_iam_role_arn)) - 1]
+    deprovision_iam_role_name = split("/", var.deprovision_iam_role_arn)[length(split("/", var.deprovision_iam_role_arn)) - 1]
+    maintenance_iam_role_name = split("/", var.maintenance_iam_role_arn)[length(split("/", var.maintenance_iam_role_arn)) - 1]
+    break_glass_iam_role_name = var.break_glass_iam_role_arn != "" ? split("/", var.break_glass_iam_role_arn)[length(split("/", var.break_glass_iam_role_arn)) - 1] : ""
   }
 }
 
@@ -269,6 +269,15 @@ variable "default_instance_type" {
   type        = string
   default     = "t3a.medium"
   description = "The EC2 instance type to use for the EKS cluster's default node group."
+}
+
+# NOTE: the architecture of ami_type must match default_instance_type. To run arm64
+# workloads, set ami_type to an ARM_64 variant and default_instance_type to a Graviton
+# instance (m7g/c7g/t4g); EKS rejects a mismatched pair at create time.
+variable "ami_type" {
+  type        = string
+  default     = "AL2023_x86_64_STANDARD"
+  description = "The AMI type for the EKS cluster's default node group. Use an ARM_64 variant (e.g. AL2023_ARM_64_STANDARD) to run the node group on Graviton instances."
 }
 
 
