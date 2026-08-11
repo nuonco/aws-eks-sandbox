@@ -177,6 +177,12 @@ variable "default_instance_type" {
   description = "The EC2 instance type to use for the EKS cluster's default node group."
 }
 
+variable "ami_type" {
+  type        = string
+  default     = "AL2023_x86_64_STANDARD"
+  description = "The AMI type for the EKS cluster's default node group. Use an ARM_64 variant (e.g. AL2023_ARM_64_STANDARD) to run the node group on Graviton instances."
+}
+
 
 variable "additional_tags" {
   type        = map(any)

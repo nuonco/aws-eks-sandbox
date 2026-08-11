@@ -24,6 +24,7 @@ module "nuon-aws-eks-sandbox" {
   max_size              = var.max_size
   desired_size          = var.desired_size
   default_instance_type = var.default_instance_type
+  ami_type              = var.ami_type
 
   # toggleable components
   enable_nuon_dns = var.enable_nuon_dns
