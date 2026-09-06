@@ -73,6 +73,13 @@ module "eks" {
     vpc-cni = {
       most_recent = true
       preserve    = true
+
+      # the cni creates secondary enis itself, so default_tags never reach them
+      configuration_values = jsonencode({
+        env = {
+          ADDITIONAL_ENI_TAGS = jsonencode(local.tags)
+        }
+      })
     }
   }
 
@@ -110,4 +117,63 @@ resource "aws_security_group_rule" "runner_cluster_access" {
   source_security_group_id = data.aws_security_groups.runner.ids[0] # make this less brittle
 
   depends_on = [module.eks]
+}
+
+# eks doesn't propagate node group tags to the asg it creates
+locals {
+  node_group_asg_tags = merge([
+    for ng in module.eks.eks_managed_node_groups : {
+      for pair in setproduct(ng.node_group_autoscaling_group_names, keys(local.tags)) :
+      "${pair[0]}|${pair[1]}" => {
+        asg_name = pair[0]
+        key      = pair[1]
+        value    = local.tags[pair[1]]
+      }
+    }
+  ]...)
+}
+
+resource "aws_autoscaling_group_tag" "node_group" {
+  for_each = local.node_group_asg_tags
+
+  autoscaling_group_name = each.value.asg_name
+
+  tag {
+    key                 = each.value.key
+    value               = each.value.value
+    propagate_at_launch = true
+  }
+}
+
+# eks makes its own copy of the launch template and points the asg at that one
+data "aws_autoscaling_group" "node_group" {
+  for_each = toset(flatten([
+    for ng in module.eks.eks_managed_node_groups : ng.node_group_autoscaling_group_names
+  ]))
+
+  name = each.value
+}
+
+locals {
+  # managed node groups reference it through a mixed instances policy
+  eks_managed_launch_template_ids = toset(compact([
+    for asg in data.aws_autoscaling_group.node_group :
+    try(asg.mixed_instances_policy[0].launch_template[0].launch_template_specification[0].launch_template_id, "") != ""
+    ? asg.mixed_instances_policy[0].launch_template[0].launch_template_specification[0].launch_template_id
+    : try(asg.launch_template[0].id, "")
+  ]))
+}
+
+resource "aws_ec2_tag" "eks_managed_launch_template" {
+  for_each = {
+    for pair in setproduct(local.eks_managed_launch_template_ids, keys(local.tags)) :
+    "${pair[0]}|${pair[1]}" => {
+      launch_template_id = pair[0]
+      key                = pair[1]
+    }
+  }
+
+  resource_id = each.value.launch_template_id
+  key         = each.value.key
+  value       = local.tags[each.value.key]
 }
