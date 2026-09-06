@@ -74,12 +74,7 @@ module "eks" {
       most_recent = true
       preserve    = true
 
-      # Secondary ENIs are created by the CNI at pod-scheduling time, not by
-      # Terraform, so provider default_tags never reach them and they end up as
-      # untagged resources sitting in the install's VPC. ADDITIONAL_ENI_TAGS makes
-      # the CNI stamp the install tags on every ENI it manages, which is what lets
-      # `nuonctl nuke lock-install` skip them. The CNI also reconciles tags onto
-      # ENIs it already owns, so existing clusters are fixed on rollout.
+      # the cni creates secondary enis itself, so default_tags never reach them
       configuration_values = jsonencode({
         env = {
           ADDITIONAL_ENI_TAGS = jsonencode(local.tags)
@@ -124,12 +119,7 @@ resource "aws_security_group_rule" "runner_cluster_access" {
   depends_on = [module.eks]
 }
 
-# EKS owns the Auto Scaling group behind a managed node group and does not
-# propagate the node group's tags onto it, so the ASG (and the instances it
-# launches) would otherwise carry only eks:/k8s.io: tags. Anything keyed off the
-# install tags therefore misses it — including `nuonctl nuke lock-install`, which
-# would delete the ASG and take the cluster's capacity with it while leaving the
-# "protected" cluster running empty.
+# eks doesn't propagate node group tags to the asg it creates
 locals {
   node_group_asg_tags = merge([
     for ng in module.eks.eks_managed_node_groups : {
@@ -155,12 +145,7 @@ resource "aws_autoscaling_group_tag" "node_group" {
   }
 }
 
-# When a managed node group uses a custom launch template, EKS still creates its
-# own copy ("eks-<uuid>") and points the ASG at that copy rather than at the one
-# Terraform manages. AWS owns the copy, so it carries only eks:cluster-name and
-# eks:nodegroup-name — nothing keyed off the install tags can see it, and deleting
-# it breaks the node group's ability to launch or replace instances. Reading the id
-# off the ASG targets exactly the template in use.
+# eks makes its own copy of the launch template and points the asg at that one
 data "aws_autoscaling_group" "node_group" {
   for_each = toset(flatten([
     for ng in module.eks.eks_managed_node_groups : ng.node_group_autoscaling_group_names
@@ -170,9 +155,7 @@ data "aws_autoscaling_group" "node_group" {
 }
 
 locals {
-  # A managed node group's ASG references its launch template through a mixed
-  # instances policy; fall back to the plain launch_template attribute in case a
-  # node group is ever configured without one.
+  # managed node groups reference it through a mixed instances policy
   eks_managed_launch_template_ids = toset(compact([
     for asg in data.aws_autoscaling_group.node_group :
     try(asg.mixed_instances_policy[0].launch_template[0].launch_template_specification[0].launch_template_id, "") != ""
