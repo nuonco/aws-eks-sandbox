@@ -73,6 +73,18 @@ module "eks" {
     vpc-cni = {
       most_recent = true
       preserve    = true
+
+      # Secondary ENIs are created by the CNI at pod-scheduling time, not by
+      # Terraform, so provider default_tags never reach them and they end up as
+      # untagged resources sitting in the install's VPC. ADDITIONAL_ENI_TAGS makes
+      # the CNI stamp the install tags on every ENI it manages, which is what lets
+      # `nuonctl nuke lock-install` skip them. The CNI also reconciles tags onto
+      # ENIs it already owns, so existing clusters are fixed on rollout.
+      configuration_values = jsonencode({
+        env = {
+          ADDITIONAL_ENI_TAGS = jsonencode(local.tags)
+        }
+      })
     }
   }
 
@@ -110,4 +122,75 @@ resource "aws_security_group_rule" "runner_cluster_access" {
   source_security_group_id = data.aws_security_groups.runner.ids[0] # make this less brittle
 
   depends_on = [module.eks]
+}
+
+# EKS owns the Auto Scaling group behind a managed node group and does not
+# propagate the node group's tags onto it, so the ASG (and the instances it
+# launches) would otherwise carry only eks:/k8s.io: tags. Anything keyed off the
+# install tags therefore misses it — including `nuonctl nuke lock-install`, which
+# would delete the ASG and take the cluster's capacity with it while leaving the
+# "protected" cluster running empty.
+locals {
+  node_group_asg_tags = merge([
+    for ng in module.eks.eks_managed_node_groups : {
+      for pair in setproduct(ng.node_group_autoscaling_group_names, keys(local.tags)) :
+      "${pair[0]}|${pair[1]}" => {
+        asg_name = pair[0]
+        key      = pair[1]
+        value    = local.tags[pair[1]]
+      }
+    }
+  ]...)
+}
+
+resource "aws_autoscaling_group_tag" "node_group" {
+  for_each = local.node_group_asg_tags
+
+  autoscaling_group_name = each.value.asg_name
+
+  tag {
+    key                 = each.value.key
+    value               = each.value.value
+    propagate_at_launch = true
+  }
+}
+
+# When a managed node group uses a custom launch template, EKS still creates its
+# own copy ("eks-<uuid>") and points the ASG at that copy rather than at the one
+# Terraform manages. AWS owns the copy, so it carries only eks:cluster-name and
+# eks:nodegroup-name — nothing keyed off the install tags can see it, and deleting
+# it breaks the node group's ability to launch or replace instances. Reading the id
+# off the ASG targets exactly the template in use.
+data "aws_autoscaling_group" "node_group" {
+  for_each = toset(flatten([
+    for ng in module.eks.eks_managed_node_groups : ng.node_group_autoscaling_group_names
+  ]))
+
+  name = each.value
+}
+
+locals {
+  # A managed node group's ASG references its launch template through a mixed
+  # instances policy; fall back to the plain launch_template attribute in case a
+  # node group is ever configured without one.
+  eks_managed_launch_template_ids = toset(compact([
+    for asg in data.aws_autoscaling_group.node_group :
+    try(asg.mixed_instances_policy[0].launch_template[0].launch_template_specification[0].launch_template_id, "") != ""
+    ? asg.mixed_instances_policy[0].launch_template[0].launch_template_specification[0].launch_template_id
+    : try(asg.launch_template[0].id, "")
+  ]))
+}
+
+resource "aws_ec2_tag" "eks_managed_launch_template" {
+  for_each = {
+    for pair in setproduct(local.eks_managed_launch_template_ids, keys(local.tags)) :
+    "${pair[0]}|${pair[1]}" => {
+      launch_template_id = pair[0]
+      key                = pair[1]
+    }
+  }
+
+  resource_id = each.value.launch_template_id
+  key         = each.value.key
+  value       = local.tags[each.value.key]
 }
