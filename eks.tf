@@ -122,12 +122,12 @@ resource "aws_security_group_rule" "runner_cluster_access" {
 # eks doesn't propagate node group tags to the asg it creates
 locals {
   node_group_asg_tags = merge([
-    for ng in module.eks.eks_managed_node_groups : {
-      for pair in setproduct(ng.node_group_autoscaling_group_names, keys(local.tags)) :
-      "${pair[0]}|${pair[1]}" => {
-        asg_name = pair[0]
-        key      = pair[1]
-        value    = local.tags[pair[1]]
+    for name, ng in module.eks.eks_managed_node_groups : {
+      for key, value in local.tags :
+      "${name}|${key}" => {
+        asg_name = one(ng.node_group_autoscaling_group_names)
+        key      = key
+        value    = value
       }
     }
   ]...)
@@ -147,28 +147,26 @@ resource "aws_autoscaling_group_tag" "node_group" {
 
 # eks makes its own copy of the launch template and points the asg at that one
 data "aws_autoscaling_group" "node_group" {
-  for_each = toset(flatten([
-    for ng in module.eks.eks_managed_node_groups : ng.node_group_autoscaling_group_names
-  ]))
+  for_each = module.eks.eks_managed_node_groups
 
-  name = each.value
+  name = one(each.value.node_group_autoscaling_group_names)
 }
 
 locals {
   # managed node groups reference it through a mixed instances policy
-  eks_managed_launch_template_ids = toset(compact([
-    for asg in data.aws_autoscaling_group.node_group :
+  eks_managed_launch_template_ids = {
+    for name, asg in data.aws_autoscaling_group.node_group : name =>
     try(asg.mixed_instances_policy[0].launch_template[0].launch_template_specification[0].launch_template_id, "") != ""
     ? asg.mixed_instances_policy[0].launch_template[0].launch_template_specification[0].launch_template_id
     : try(asg.launch_template[0].id, "")
-  ]))
+  }
 }
 
 resource "aws_ec2_tag" "eks_managed_launch_template" {
   for_each = {
-    for pair in setproduct(local.eks_managed_launch_template_ids, keys(local.tags)) :
+    for pair in setproduct(keys(local.eks_managed_launch_template_ids), keys(local.tags)) :
     "${pair[0]}|${pair[1]}" => {
-      launch_template_id = pair[0]
+      launch_template_id = local.eks_managed_launch_template_ids[pair[0]]
       key                = pair[1]
     }
   }
